@@ -5,7 +5,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const sequelize = require("./config/database");
+// const sequelize = require("./config/db");
 const { poolPromise } = require('./config/db');
 
 //ROUTES INITIALIZATION
@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 });
 
 // CONNECT TO DATABASE
-// connectDB();
+connectDB();
 
 //API ROUTES
 app.use("/api/products", productRoutes);
@@ -34,10 +34,5 @@ app.use("/api/users", userRoutes);
 
 // Start server
 const PORT = 5000;
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
 
-sequelize.sync()
-  .then(() => {
-    console.log("✅ Database synced");
-    app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
-  })
-  .catch(err => console.log("❌ Error syncing database:", err));
