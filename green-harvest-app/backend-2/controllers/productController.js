@@ -1,14 +1,20 @@
-const Product = require("../models/Product");
+const db = require("../models"); // Import the models index
+const Product = db.Product; // Get the Product model
+
 
 // Get all products
 const getProducts = async (req, res) => {
     try {
+        console.log("Fetching products...");
         const products = await Product.findAll();
+        console.log("Generated Query:", products);
         res.json(products);
     } catch (error) {
+        console.error("Error fetching products:", error);
         res.status(500).json({ message: "Server Error", error });
     }
 };
+
 
 // Get product by ID
 const getProductById = async (req, res) => {
