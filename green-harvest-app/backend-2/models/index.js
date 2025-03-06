@@ -1,16 +1,27 @@
-const User = require("./User");
-const Product = require("./Product");
-const Order = require("./Order");
-const OrderItem = require("./OrderItem");
+const { Sequelize, DataTypes } = require("sequelize");
+const config = require("../config/config.json")["development"];
 
-// Associations
-User.hasMany(Order, { foreignKey: "userId" });
-Order.belongsTo(User, { foreignKey: "userId" });
+const sequelize = new Sequelize(
+  config.database,
+  config.username,
+  config.password,
+  {
+    host: config.host,
+    dialect: config.dialect,
+    dialectOptions: config.dialectOptions
+  }
+);
 
-Order.hasMany(OrderItem, { foreignKey: "orderId" });
-OrderItem.belongsTo(Order, { foreignKey: "orderId" });
+// Test connection
+sequelize.authenticate()
+  .then(() => console.log("✅ Connected to Azure SQL Database"))
+  .catch(err => console.error("❌ Connection error:", err));
 
-Product.hasMany(OrderItem, { foreignKey: "productId" });
-OrderItem.belongsTo(Product, { foreignKey: "productId" });
+const db = {};
+db.Sequelize = Sequelize;
+db.sequelize = sequelize;
 
-module.exports = { User, Product, Order, OrderItem };
+// Import models
+db.Product = require("./product")(sequelize, DataTypes);
+
+module.exports = db;
