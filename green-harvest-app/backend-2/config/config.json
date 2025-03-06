@@ -1,0 +1,26 @@
+{
+  "development": {
+      "username": "greenHarvestAdmin",
+      "password": "Greenharvest2025!",
+      "database": "GreenHarvest",
+      "host": "greenharvestserver.database.windows.net",
+      "dialect": "mssql",
+      "dialectOptions": {
+        "encrypt": true
+      }
+    },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
