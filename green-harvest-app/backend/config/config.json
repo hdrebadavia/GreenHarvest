@@ -1,0 +1,13 @@
+{
+    "development": {
+      "username": "greenHarvestAdmin",
+      "password": "Greenharvest2025!",
+      "database": "GreenHarvest",
+      "host": "greenharvestserver.database.windows.net",
+      "dialect": "mssql",
+      "dialectOptions": {
+        "encrypt": true
+      }
+    }
+  }
+  
