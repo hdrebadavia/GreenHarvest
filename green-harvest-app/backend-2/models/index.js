@@ -22,6 +22,9 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 // Import models
-db.Product = require("./product")(sequelize, DataTypes);
+db.Product = require("./products")(sequelize, DataTypes);
+db.User = require("./users")(sequelize, DataTypes);
+db.Address = require("./addresses")(sequelize, DataTypes);
+db.Store = require("./stores")(sequelize, DataTypes);
 
 module.exports = db;
