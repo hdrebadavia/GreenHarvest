@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        field: "ProductID"
+        field: "ProductId"
       },
       Name: {
         type: DataTypes.STRING,
@@ -41,7 +41,12 @@ module.exports = (sequelize, DataTypes) => {
       StoreID: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        field: "StoreID"
+        field: "StoreId",
+        references: {
+            model: "Stores",
+            key: "StoreId"
+        },
+        onDelete: "CASCADE"
       },
       CreatedBy: {
         type: DataTypes.INTEGER,
