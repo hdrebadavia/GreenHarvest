@@ -25,6 +25,10 @@ sequelize.authenticate()
 
 const db = require("./models");
 
+const crypto = require('crypto');
+const secret = crypto.randomBytes(64).toString('hex');
+console.log(secret);
+
 // db.sequelize.sync({ force: true }) // ⚠️ DANGER: This resets all tables!
 //   .then(() => console.log("✅ Database & tables synced"))
 //   .catch(err => console.error("❌ Sync error:", err));

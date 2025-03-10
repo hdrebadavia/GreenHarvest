@@ -1,6 +1,7 @@
 const db = require("../models"); // Import the models index
 const User = db.User; // Get the User model
 const bcrypt = require("bcryptjs");
+const jwt = require('jsonwebtoken');   
 
 // Register a new user
 const registerUser = async (req, res) => {
@@ -39,7 +40,11 @@ const loginUser = async (req, res) => {
         const isMatch = await bcrypt.compare(Password, user.PasswordHash);
         if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-        res.status(200).json({ message: "Login successful", user });
+        // Generate JWT token
+        const token = jwt.sign({ id: user.UserId, role: user.Role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        // Include the user's role and token in the response
+        res.status(200).json({ message: "Login successful", token, user: { id: user.UserId, role: user.Role } });
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
             const messages = error.errors.map(err => err.message);
