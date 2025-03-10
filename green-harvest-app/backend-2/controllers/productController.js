@@ -5,13 +5,14 @@ const Product = db.Product; // Get the Product model
 // Get all products
 const getProducts = async (req, res) => {
     try {
-        console.log("Fetching products...");
         const products = await Product.findAll();
-        console.log("Generated Query:", products);
         res.json(products);
     } catch (error) {
-        console.error("Error fetching products:", error);
-        res.status(500).json({ message: "Server Error", error });
+        if (error.name === 'SequelizeValidationError') {
+            const messages = error.errors.map(err => err.message);
+            return res.status(400).json({ message: "Validation Error", errors: messages });
+        }
+        res.status(500).json({ message: "Server Error", error: error.message });
     }
 };
 
@@ -24,7 +25,11 @@ const getProductById = async (req, res) => {
 
         res.json(product);
     } catch (error) {
-        res.status(500).json({ message: "Server Error", error });
+        if (error.name === 'SequelizeValidationError') {
+            const messages = error.errors.map(err => err.message);
+            return res.status(400).json({ message: "Validation Error", errors: messages });
+        }
+        res.status(500).json({ message: "Server Error", error: error.message });
     }
 };
 
