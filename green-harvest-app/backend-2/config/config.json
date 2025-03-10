@@ -22,5 +22,15 @@
     "database": "database_production",
     "host": "127.0.0.1",
     "dialect": "mysql"
+  },
+  "local": {
+    "username": "sa",
+    "password": "localPassw0rd123!",
+    "database": "GreenHarvest",
+    "host": "localhost",
+    "dialect": "mssql",
+    "dialectOptions": {
+      "encrypt": true
+    }
   }
 }
