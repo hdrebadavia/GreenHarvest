@@ -1,9 +1,11 @@
 const db = require("../models"); // Import the models index
 const User = db.User; // Get the User model
 const bcrypt = require("bcryptjs");
-const jwt = require('jsonwebtoken');   
+const jwt = require('jsonwebtoken');
+const moment = require('moment');
 
-// Register a new user
+// #region Register a new user
+
 const registerUser = async (req, res) => {
     try {
         const { FirstName, MiddleName, LastName, EmailAddress, ContactNumber, password, Role  } = req.body;
@@ -16,7 +18,14 @@ const registerUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create user
-        const newUser = await User.create({ FirstName, MiddleName, LastName, EmailAddress, ContactNumber, PasswordHash: hashedPassword, Role });
+        const newUser = await
+            User.create({   FirstName,
+                            MiddleName,
+                            LastName,
+                            EmailAddress,
+                            ContactNumber,
+                            PasswordHash: hashedPassword,
+                            Role });
         res.status(201).json({ message: "User registered successfully", user: newUser });
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
@@ -27,7 +36,9 @@ const registerUser = async (req, res) => {
     }
 };
 
-// Login user
+//#endregion
+
+// #region Login user
 const loginUser = async (req, res) => {
     try {
         const { EmailAddress, Password } = req.body;
@@ -53,8 +64,9 @@ const loginUser = async (req, res) => {
         res.status(500).json({ message: "Server Error", error: error.message });
     }
 };
+//#endregion
 
-// Reset Password
+// #region Reset Password
 
 const resetPassword = async (req, res) => {
     try {
@@ -80,7 +92,10 @@ const resetPassword = async (req, res) => {
         res.status(500).json({ message: "Server Error", error: error.message });
     }
 };
-// Get all users
+
+//#endregion
+
+// #region Get all users
 const getUsers = async (req, res) => {
     try {
         const users = await User.findAll();
@@ -90,8 +105,9 @@ const getUsers = async (req, res) => {
     }
 };
 
-// Get user by ID
+//#endregion
 
+// #region Get user by ID
 const getUserById = async(req, res) => {
     try{
         const user = await User.findByPk(req.params.id)
@@ -107,4 +123,40 @@ const getUserById = async(req, res) => {
     }
 }
 
-module.exports = { registerUser, loginUser, getUsers, resetPassword, getUserById };
+// #region Delete user
+const deleteUser = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.params.id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        await user.destroy();
+        res.json({ message: "User deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Server Error", error: error.message });
+    }
+}
+
+// #region Update user
+const updateUser = async (req, res) => {
+    try {
+        const { FirstName, MiddleName, LastName, EmailAddress, ContactNumber, Role } = req.body;
+        const user = await User.findByPk(req.params.id);
+
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        user.FirstName = FirstName || user.FirstName;
+        user.MiddleName = MiddleName || user.MiddleName;
+        user.LastName = LastName || user.LastName;
+        user.EmailAddress = EmailAddress || user.EmailAddress;
+        user.ContactNumber = ContactNumber || user.ContactNumber;
+        user.Role = Role || user.Role;
+        user.updatedAt = new Date();
+        await user.save();
+
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: "Error updating user", error });
+    }
+}
+//#endregion
+module.exports = { registerUser, loginUser, getUsers, resetPassword, getUserById, deleteUser, updateUser };
