@@ -47,12 +47,16 @@ module.exports = (sequelize, DataTypes) => {
         },
         CreatedAt: {
             type: DataTypes.DATE,
-            field: "CreatedAt"
+            field: "CreatedAt",
+            allowNull: false,
+            defaultValue: sequelize.literal("GETDATE()")
         },
         UpdatedAt: {
             type: DataTypes.DATE,
-            field: "UpdatedAt"
-        }
+            allowNull: true,
+            field: "UpdatedAt",
+            onUpdate: sequelize.literal("GETDATE()")
+        },
     }, {
         tableName: "Users",
         timestamps: false,
