@@ -23,7 +23,9 @@ module.exports = (sequelize, DataTypes) => {
         },
         CreatedAt: {
             type: DataTypes.DATE,
-            field: "CreatedAt"
+            field: "CreatedAt",
+            allowNull: false,
+            defaultValue: sequelize.literal("GETDATE()")
         },
         CreatedBy: {
             type: DataTypes.INTEGER,
@@ -36,7 +38,9 @@ module.exports = (sequelize, DataTypes) => {
         },
         UpdatedAt: {
             type: DataTypes.DATE,
-            field: "UpdatedAt"
+            allowNull: true,
+            field: "UpdatedAt",
+            onUpdate: sequelize.literal("GETDATE()")
         },
         UpdatedBy: {
             type: DataTypes.INTEGER,
@@ -49,10 +53,8 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {
         tableName: "Stores",
-        timestamps: true,
-        schema: "GreenHarvest",
-        UpdatedAt: "UpdatedAt",
-        CreatedAt: "CreatedAt"
+        timestamps: false,
+        schema: "GreenHarvest"
     });
 
     return Store;
