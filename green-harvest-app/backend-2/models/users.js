@@ -63,5 +63,10 @@ module.exports = (sequelize, DataTypes) => {
         schema: "GreenHarvest"
     });
 
+    // Define relationships
+    User.associate = (models) => {
+        User.hasMany(models.Products, { foreignKey: "CreatedBy", as: "Products" });
+    };
+
     return User;
 };

@@ -48,6 +48,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         onDelete: "CASCADE"
       },
+      CreatedAt: {
+          type: DataTypes.DATE,
+          field: "CreatedAt",
+          allowNull: false,
+          defaultValue: sequelize.literal("GETDATE()")
+      },
       CreatedBy: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -56,6 +62,12 @@ module.exports = (sequelize, DataTypes) => {
           model: 'Users',
           key: 'UserId'
         }
+      },
+      UpdatedAt: {
+          type: DataTypes.DATE,
+          field: "UpdatedAt",
+          allowNull: true,
+          onUpdate: sequelize.literal("GETDATE()")
       },
       UpdatedBy: {
         type: DataTypes.INTEGER,
@@ -68,9 +80,14 @@ module.exports = (sequelize, DataTypes) => {
       }
     }, {
         tableName: "Products",
-        timestamps: true,
+        timestamps: false,
         schema: "GreenHarvest"
     });
+
+    // Define relationships
+    Product.associate = (models) => {
+      Product.belongsTo(models.Users, { foreignKey: "CreatedBy", as: "Creator" });
+    };
 
     return Product;
 };
