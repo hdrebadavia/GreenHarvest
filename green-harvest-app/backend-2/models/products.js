@@ -85,9 +85,17 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     // Define relationships
-    Product.associate = (models) => {
-      Product.belongsTo(models.Users, { foreignKey: "CreatedBy", as: "Creator" });
-    };
+    // Product.associate = (models) => {
+    //   Product.belongsTo(models.Users, { foreignKey: "CreatedBy", as: "Creator" });
+    //   Product.belongsTo(models.Users, { foreignKey: "UpdatedBy", as: "Updater" });
+    //   Product.belongsTo(models.Stores, { foreignKey: "StoreId", as: "Store" });
+    //   Product.hasMany(models.OrderItems, { foreignKey: "ProductId", as: "OrderItems" });
+    //   Product.hasMany(models.Orders, { foreignKey: "ProductId", as: "Orders" });
+    //   Product.hasMany(models.Addresses, { foreignKey: "ProductId", as: "Addresses" });
+    //   Product.hasMany(models.Stores, { foreignKey: "ProductId", as: "Stores" });
+    //   Product.hasMany(models.Users, { foreignKey: "ProductId", as: "Users" });
+    //   Product.hasMany(models.Products, { foreignKey: "ProductId", as: "Products" });
+    // };
 
     return Product;
 };
