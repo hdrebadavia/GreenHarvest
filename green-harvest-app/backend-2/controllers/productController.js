@@ -6,17 +6,17 @@ const Product = db.Product; // Get the Product model
 const getProducts = async (req, res) => {
     try {
         const products = await Product.findAll({
-            include:{
-                model: db.User,
-                as: "Creator",
-                attributes: ['FirstName', 'LastName']
-            }
+            // include:{
+            //     model: db.User,
+            //     as: "Creator",
+            //     attributes: ['FirstName', 'LastName']
+            // }
         });
-        const productsWithFullName = products.map(product => ({
-            ...product.toJSON(),
-            CreatedByFullName: `${product.Creator.FirstName} ${product.Creator.LastName}`
-        }));
-        res.json(productsWithFullName);
+        // const productsWithFullName = products.map(product => ({
+        //     ...product.toJSON(),
+        //     CreatedByFullName: `${product.Creator.FirstName} ${product.Creator.LastName}`
+        // }));
+        res.json(products);
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
             const messages = error.errors.map(err => err.message);
