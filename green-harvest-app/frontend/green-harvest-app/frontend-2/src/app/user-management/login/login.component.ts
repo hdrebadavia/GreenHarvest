@@ -21,10 +21,8 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.apiService.login(this.loginForm.value).subscribe(
         response => {
-          // Handle successful login
         },
         error => {
-          // Handle login error
         }
       );
     }
