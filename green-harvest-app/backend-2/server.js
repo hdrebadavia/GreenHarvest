@@ -20,7 +20,7 @@ app.use("/api/orders", require("./routes/orderRoutes"));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // Connect to DB and start server
-const PORT = 5000;
+const PORT = 5001;
 connectDB();
 
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
