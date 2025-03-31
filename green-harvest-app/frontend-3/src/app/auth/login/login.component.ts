@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from 'express';
 
 @Component({
   selector: 'app-login',
@@ -10,8 +12,18 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent {
   email: string = 'hdrebadavia@gmail.com';
   password: string = 'Greenharvest2025!';
-
-  constructor(private authService: AuthService) {}
+  loginForm: FormGroup;
+  
+  constructor(
+    private authService: AuthService,
+    private fb: FormBuilder,
+    private router: Router
+  ) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]]
+    });
+  }
 
   ngOnInit(): void {
     this.login()
