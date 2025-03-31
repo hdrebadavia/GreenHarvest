@@ -5,5 +5,5 @@ import { RegistrationComponent } from './authentication/registration/registratio
 export const appRoutes: Routes = [  // export appRoutes, not routes
   { path: 'auth/login', component: LoginComponent },
   { path: 'auth/register', component: RegistrationComponent },
-  { path: '', redirectTo: '/auth/login', pathMatch: 'full' },
+  { path: '**', redirectTo: '/auth/login', pathMatch: 'full' },
 ];

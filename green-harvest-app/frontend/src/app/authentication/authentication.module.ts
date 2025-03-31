@@ -6,6 +6,8 @@ import { RegistrationComponent } from './registration/registration.component';
 import { RouterModule } from '@angular/router';
 import { appRoutes } from '../app.routes';
 import { SharedModule } from '../shared/shared.module';
+import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
+
 
 
 
@@ -17,10 +19,7 @@ import { SharedModule } from '../shared/shared.module';
   imports: [
     CommonModule,
     AuthRoutingModule,
-    RouterModule.forRoot(appRoutes),
     SharedModule
-  ],
-  providers: [],
-  bootstrap: [LoginComponent]
+  ]
 })
 export class AuthenticationModule { }
