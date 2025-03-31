@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require("sequelize");
-// const config = require("../config/config.json")["development"]; //AZURE SQL
-const config = require("../config/config.json")["local"]; //LOCAL SQLcd
+const config = require("../config/config.json")["development"]; //AZURE SQL
+// const config = require("../config/config.json")["local"]; //LOCAL SQL
 
 const sequelize = new Sequelize(
   config.database,
