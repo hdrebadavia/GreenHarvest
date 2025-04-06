@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './login/login.component';
-import { RouterModule } from '@angular/router';
+import { provideRouter, RouterModule } from '@angular/router';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -27,9 +27,6 @@ import { provideHttpClient } from '@angular/common/http';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule
-  ],
-  providers: [
-    provideHttpClient()
   ]
 })
 export class AuthModule { }
