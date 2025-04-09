@@ -18,3 +18,7 @@ export const register = (
         Role: string }) => {
    return api.post(`/users/register`, data);
   };
+
+  export const getProducts = () => {
+    return api.get('/products');
+  }
