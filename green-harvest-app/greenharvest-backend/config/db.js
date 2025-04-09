@@ -8,6 +8,8 @@ const sequelize = new Sequelize("GreenHarvest", "greenHarvestAdmin", "Greenharve
   dialectOptions: {
     encrypt: true, // Required for Azure SQL
     trustServerCertificate: false, // Change to true if using a self-signed certificate
+    connectRetryCount: 5,  // Number of retry attempts
+    connectRetryInterval: 10,  // Interval between retries in seconds
   },
   logging: console.log, // Optional: Disable Sequelize logs
 });
