@@ -22,3 +22,11 @@ export const register = (
   export const getProducts = () => {
     return api.get('/products');
   }
+
+  export const getStores = () => {
+    return api.get('/stores');
+  }
+
+  // export const getProductsById = (storeId: number) => {  
+  //   return api.get(`/stores/${storeId}/products`);
+  // }

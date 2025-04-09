@@ -38,59 +38,59 @@ const Register = () => {
 
   return (
     <Box display="flex" flexDirection="column" gap={2} maxWidth={400} mx="auto" mt={10}>
-    <Typography variant="h5" textAlign="center">Register</Typography>
-    <TextField
-      label="First Name"
-      type="text"
-      value={FirstName}
-      onChange={(e) => setFirstName(e.target.value)}
-      fullWidth
-    />
-    <TextField
-      label="Middle Name"
-      type="text"
-      value={MiddleName}
-      onChange={(e) => setMiddleName(e.target.value)}
-      fullWidth
-    />
-    <TextField
-      label="Last Name"
-      type="text"
-      value={LastName}
-      onChange={(e) => setLastName(e.target.value)}
-      fullWidth
-    />
-    <TextField
-      label="Email Address"
-      type="email"
-      value={EmailAddress}
-      onChange={(e) => setEmailAddress(e.target.value)}
-      fullWidth
-    />
-    <TextField
-      label="Contact Number"
-      type="text"
-      value={ContactNumber}
-      onChange={(e) => setContactNumber(e.target.value)}
-      fullWidth
-    />
-    <TextField
-      label="Password"
-      type="password"
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-      fullWidth
-    />
-    <TextField
-      label="Confirm Password"
-      type="password"
-      value={confirmPassword}
-      onChange={(e) => setConfirmPassword(e.target.value)}
-      fullWidth
-    />
-    <Button variant="contained" color="primary" onClick={handleRegister} fullWidth>
-      Register
-    </Button>
+      <Typography variant="h5" textAlign="center">Register</Typography>
+      <TextField
+        label="First Name"
+        type="text"
+        value={FirstName}
+        onChange={(e) => setFirstName(e.target.value)}
+        fullWidth
+      />
+      <TextField
+        label="Middle Name"
+        type="text"
+        value={MiddleName}
+        onChange={(e) => setMiddleName(e.target.value)}
+        fullWidth
+      />
+      <TextField
+        label="Last Name"
+        type="text"
+        value={LastName}
+        onChange={(e) => setLastName(e.target.value)}
+        fullWidth
+      />
+      <TextField
+        label="Email Address"
+        type="email"
+        value={EmailAddress}
+        onChange={(e) => setEmailAddress(e.target.value)}
+        fullWidth
+      />
+      <TextField
+        label="Contact Number"
+        type="text"
+        value={ContactNumber}
+        onChange={(e) => setContactNumber(e.target.value)}
+        fullWidth
+      />
+      <TextField
+        label="Password"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        fullWidth
+      />
+      <TextField
+        label="Confirm Password"
+        type="password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        fullWidth
+      />
+      <Button variant="contained" color="primary" onClick={handleRegister} fullWidth>
+        Register
+      </Button>
     </Box>
   );
 };

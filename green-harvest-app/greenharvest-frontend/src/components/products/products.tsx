@@ -20,7 +20,6 @@ interface Product {
   Quantity: number;
   Unit: string;
   StoreId: number;
-
 }
 
 const ProductPage = () => {
