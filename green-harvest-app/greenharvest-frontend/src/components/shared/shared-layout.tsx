@@ -3,6 +3,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
 import React from 'react';
+import { AccountCircle } from '@mui/icons-material';
 
 interface SharedLayoutProps {
   title: string;
@@ -49,14 +50,13 @@ const SharedLayout: React.FC<SharedLayoutProps> = ({ title, children }) => {
   return (
     <Box>
       <Grid container spacing={2} sx={{ padding: 2, textAlign: 'center' }}>
-        <Grid size={4}>
+        <Grid size={3}>
           <Box
           component="img"
           src="/src/assets/GreenHarvest Logo - Transparent.png"
           alt="Logo"
           sx={{
             width: '35%',
-            height: 'auto',
             display: 'inline-block',
             transition: 'transform 0.2s',
             '&:hover': {
@@ -65,39 +65,31 @@ const SharedLayout: React.FC<SharedLayoutProps> = ({ title, children }) => {
           }}
           />
         </Grid>
-        <Grid size={4}>
+        <Grid size={6} sx={{display:'flex', justifyContent: 'center', alignItems: 'center', margin:'0px'}}>
           <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-            <Tab label="Item One" {...a11yProps(0)} />
-            <Tab label="Item Two" {...a11yProps(1)} />
-            <Tab label="Item Three" {...a11yProps(2)} />
+            <Tab label="Products" {...a11yProps(0)} />
+            <Tab label="About GreenHarvest" {...a11yProps(1)} />
           </Tabs>
         </Grid>
-        <Grid size={4}>
-          <Typography variant="h4" textAlign="center" mb={3}>
-            acct
+        <Grid size={3}>
+          <Typography fontSize={60} textAlign="center" mb={0}>
+            <AccountCircle></AccountCircle>
           </Typography>
         </Grid>
       </Grid>
       <Grid container spacing={2}>
-            <Grid size={4}>
+            <Grid size={3}>
                 <Typography>Navigation Pane</Typography>
             </Grid>
-            <Grid size={8}>
+            <Grid size={9} padding={0}>
               <CustomTabPanel value={value} index={0}>
-                Item One
-              </CustomTabPanel>
-              <CustomTabPanel value={value} index={1}>
-                Item Two
-              </CustomTabPanel>
-              <CustomTabPanel value={value} index={2}>
-                Item Three
-              </CustomTabPanel>
-                <Typography variant="h4" textAlign="center" mb={3}>
-                    {title}
-                </Typography>
                 <Box>
                     {children}
                 </Box>
+              </CustomTabPanel>
+              <CustomTabPanel value={value} index={1}>
+                About
+              </CustomTabPanel>
             </Grid>
         </Grid>
     </Box>
