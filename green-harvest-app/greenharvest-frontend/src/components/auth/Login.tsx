@@ -1,17 +1,20 @@
 import { Button, TextField, Typography, Box } from '@mui/material';
 import { useState } from 'react';
 import { login } from '../../services/api';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link, useNavigate } from 'react-router-dom'; // Import Link from react-router-dom
 
 
 const Login = () => {
   const [EmailAddress, setEmail] = useState('');
   const [Password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
       const response = await login({ EmailAddress, Password });
       console.log('Logged in!', response.data);
+
+      navigate('/products')
     } catch (error) {
       console.error('Login failed:', error);
     }
