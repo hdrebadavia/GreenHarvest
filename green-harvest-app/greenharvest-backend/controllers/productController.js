@@ -53,6 +53,35 @@ const getProductById = async (req, res) => {
     }
 };
 
+// Get product by Store ID
+const getProductsByStoreId = async (req, res) => {
+    try {
+        const storeId = req.params.storeId;
+        const products = await Product.findAll({
+            where: { StoreId: storeId }
+        });
+
+        if (!products.length) return res.status(404).json({ message: "No products found for this store" });
+        
+        products.forEach(product => {
+            console.log(product.CreatedBy)
+            const creator = db.User.findByPk(product.CreatedBy);
+
+            const productsWithFullName = products.map(product => ({
+                ...product.toJSON(),
+                CreatedByFullName: `${creator.FirstName} ${creator.LastName}`
+            }));
+            res.json(productsWithFullName);
+        }); 
+    } catch (error) {
+        if (error.name === 'SequelizeValidationError') {
+            const messages = error.errors.map(err => err.message);
+            return res.status(400).json({ message: "Validation Error", errors: messages });
+        }
+        res.status(500).json({ message: "Server Error", error: error.message });
+    }
+}
+
 // Create a new product
 const createProduct = async (req, res) => {
     try {
@@ -111,4 +140,4 @@ const deleteProduct = async (req, res) => {
     }
 };
 
-module.exports = { getProducts, getProductById, createProduct, updateProduct, deleteProduct };
+module.exports = { getProducts, getProductById, getProductsByStoreId, createProduct, updateProduct, deleteProduct };

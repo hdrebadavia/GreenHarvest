@@ -5,7 +5,8 @@ const router = express.Router();
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
-router.get('/', authenticate, authorize(['Admin']), getUsers);
+// router.get('/', authenticate, authorize(['Admin']), getUsers);
+router.get('/', getUsers);
 router.get('/:id', authenticate, authorize(['Admin', 'Customer', 'StoreOwner']), getUserById);
 router.post('/reset-password', authenticate, resetPassword);
 router.patch('/update/:id', authenticate, authorize(['Admin', 'Customer', 'StoreOwner']), updateUser);
