@@ -2,6 +2,9 @@ import { Routes, Route } from 'react-router-dom';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import ProductPage from './components/products/products';
+import GrammarChecker from './components/grammarchecker';
+
+
 
 function App() {
   return (
@@ -9,6 +12,7 @@ function App() {
       <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/products" element={<ProductPage />} />
+      <Route path="/grammarCheck" element={<GrammarChecker />} />
     </Routes>
   );
 }
