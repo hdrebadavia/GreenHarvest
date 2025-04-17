@@ -1,8 +1,8 @@
-import { Box, Container, Grid, Typography } from '@mui/material';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
 
-import React from 'react';
+import { Container, Row, Col, Nav, Tab } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import React, { useState } from 'react';
 import { AccountCircle } from '@mui/icons-material';
 
 interface SharedLayoutProps {
@@ -27,7 +27,7 @@ function CustomTabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Container>{children}</Container>}
     </div>
   );
 }
@@ -40,6 +40,7 @@ function a11yProps(index: number) {
 }
 
 const SharedLayout: React.FC<SharedLayoutProps> = ({ title, children }) => {
+  const [activeKey, setActiveKey] = useState('products');
 
   const [value, setValue] = React.useState(0);
 
@@ -48,51 +49,72 @@ const SharedLayout: React.FC<SharedLayoutProps> = ({ title, children }) => {
   };
 
   return (
-    <Box>
-      <Grid container spacing={2} sx={{ padding: 2, textAlign: 'center' }}>
-        <Grid size={3}>
-          <Box
-          component="img"
+    <Container fluid className="p-4">
+    {/* Header Section */}
+    <Row className="align-items-center text-center mb-4">
+      {/* Logo */}
+      <Col xs={12} md={3} className="text-center">
+        <img
           src="/src/assets/GreenHarvest Logo - Transparent.png"
           alt="Logo"
-          sx={{
+          style={{
             width: '35%',
-            display: 'inline-block',
             transition: 'transform 0.2s',
-            '&:hover': {
-              transform: 'scale(1.05)',
-            },
+            cursor: 'pointer',
           }}
-          />
-        </Grid>
-        <Grid size={6} sx={{display:'flex', justifyContent: 'center', alignItems: 'center', margin:'0px'}}>
-          <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-            <Tab label="Products" {...a11yProps(0)} />
-            <Tab label="About GreenHarvest" {...a11yProps(1)} />
-          </Tabs>
-        </Grid>
-        <Grid size={3}>
-          <Typography fontSize={60} textAlign="center" mb={0}>
-            <AccountCircle></AccountCircle>
-          </Typography>
-        </Grid>
-      </Grid>
-      <Grid container spacing={2}>
-            <Grid size={3}>
-                <Typography>Navigation Pane</Typography>
-            </Grid>
-            <Grid size={9} padding={0}>
-              <CustomTabPanel value={value} index={0}>
-                <Box>
-                    {children}
-                </Box>
-              </CustomTabPanel>
-              <CustomTabPanel value={value} index={1}>
-                About
-              </CustomTabPanel>
-            </Grid>
-        </Grid>
-    </Box>
+          onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+          onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+        />
+      </Col>
+
+      {/* Tabs */}
+      <Col xs={12} md={6} className="text-center">
+        <Nav
+          variant="tabs"
+          activeKey={activeKey}
+          onSelect={(selectedKey) => setActiveKey(selectedKey || 'products')}
+          className="justify-content-center"
+        >
+          <Nav.Item>
+            <Nav.Link eventKey="products">Products</Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link eventKey="about">About GreenHarvest</Nav.Link>
+          </Nav.Item>
+        </Nav>
+      </Col>
+
+        {/* Account Icon */}
+        <Col xs={12} md={3} className="text-center">
+          <i
+            className="bi bi-person-circle"
+            style={{ fontSize: '60px', color: '#000' }}
+          ></i>
+        </Col>
+      </Row>
+
+      {/* Main Content Section */}
+      <Row>
+        {/* Navigation Pane */}
+        <Col xs={12} md={3} className="border-end">
+          <h5>Navigation Pane</h5>
+          <p>Links or additional content can go here.</p>
+        </Col>
+
+        {/* Tab Content */}
+        <Col xs={12} md={9}>
+          <Tab.Content>
+            <Tab.Pane eventKey="products" active={activeKey === 'products'}>
+              {children}
+            </Tab.Pane>
+            <Tab.Pane eventKey="about" active={activeKey === 'about'}>
+              <h3>About GreenHarvest</h3>
+              <p>Information about GreenHarvest can go here.</p>
+            </Tab.Pane>
+          </Tab.Content>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
