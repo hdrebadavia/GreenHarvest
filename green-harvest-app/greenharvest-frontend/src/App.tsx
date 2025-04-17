@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import ProductPage from './components/products/products';
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 function App() {
   return (
