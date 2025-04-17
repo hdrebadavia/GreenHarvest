@@ -35,6 +35,7 @@ const ProductPage = () => {
       .then((response) => {
         setProducts(response.data);
         console.log('Products fetched successfully:', response.data);
+        handleSearch({ target: { value: searchTerm } } as React.ChangeEvent<HTMLInputElement>);
       })
       .catch((error) => {
         console.error('Error fetching products:', error);
@@ -48,10 +49,14 @@ const ProductPage = () => {
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
-    const filtered = products.filter((product) =>
-      product.Name.toLocaleLowerCase().includes(value)
-    );
-    setFilteredProducts(filtered)
+    if(value === '') {
+      setFilteredProducts(products);
+    } else {
+      const filtered = products.filter((product) =>
+        product.Name.toLocaleLowerCase().includes(value)
+      );
+      setFilteredProducts(filtered)
+    }
   }
   if (loading) {
     return <Typography textAlign="center" mt={5}>Loading products...</Typography>;
@@ -62,42 +67,37 @@ const ProductPage = () => {
   }
 
   return (
-    <SharedLayout title="Products">
-        {/* <Typography variant="h4" textAlign="center" mb={3}>Our Products</Typography> */}
-        <Box>
-          <TextField
-            label="Search Products"
-            variant="outlined"
-            value={searchTerm}
-            onChange={handleSearch}
-          />
-        </Box>
-        <Grid container spacing={2}>
-            {filteredProducts.map((product) => (
-              <Grid size={4} key={product.ProductId} padding={0}>
-                <Card>
-                  <CardMedia
-                    component="img"
-                    height="140"
-                    image="https://plus.unsplash.com/premium_photo-1661322640130-f6a1e2c36653?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YXBwbGV8ZW58MHx8MHx8fDA%3D"
-                    alt={product.Name}
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {product.Name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {product.Description}
-                    </Typography>
-                    <Typography variant="h6" color="text.primary">
-                      ${product.Price}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-        </Grid>
-    </SharedLayout>
+    <div className="container mt-4">
+      <h1 className="text-center mb-4">Products</h1>
+      <div className="mb-4">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Search Products"
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </div>
+      <div className="row">
+        {filteredProducts.map((product) => (
+          <div className="col-12 col-sm-6 col-md-4 mb-4" key={product.ProductId}>
+            <div className="card h-100">
+              <img
+                src={product.imageUrl}
+                className="card-img-top"
+                alt={product.Name}
+                style={{ height: '140px', objectFit: 'cover' }}
+              />
+              <div className="card-body">
+                <h5 className="card-title">{product.Name}</h5>
+                <p className="card-text text-muted">{product.Description}</p>
+                <h6 className="card-subtitle text-primary">${product.Price}</h6>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
