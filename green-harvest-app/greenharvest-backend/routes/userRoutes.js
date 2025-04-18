@@ -7,7 +7,7 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 // router.get('/', authenticate, authorize(['Admin']), getUsers);
 router.get('/', getUsers);
-router.get('/:id', authenticate, authorize(['Admin', 'Customer', 'StoreOwner']), getUserById);
+router.get('/:id', getUserById);
 router.post('/reset-password', authenticate, resetPassword);
 router.patch('/update/:id', authenticate, authorize(['Admin', 'Customer', 'StoreOwner']), updateUser);
 router.delete('/:id', authenticate, authorize(['Admin']), deleteUser);
