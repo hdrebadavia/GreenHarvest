@@ -1,7 +1,8 @@
 import { Button, TextField, Typography, Box } from '@mui/material';
 import { useState } from 'react';
-import { login } from '../../services/api';
+import { getUser, login } from '../../services/api';
 import { Link, useNavigate } from 'react-router-dom'; // Import Link from react-router-dom
+import { userService } from '../../services/user.service';
 
 
 const Login = () => {
@@ -14,6 +15,8 @@ const Login = () => {
       const response = await login({ EmailAddress, Password });
       console.log('Logged in!', response.data);
 
+      const userResponse = await getUser(response.data.user.id);
+      userService.setUserDetails(userResponse.data);
       navigate('/products')
     } catch (error) {
       console.error('Login failed:', error);
