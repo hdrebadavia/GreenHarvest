@@ -15,8 +15,10 @@ const Login = () => {
       const response = await login({ EmailAddress, Password });
       console.log('Logged in!', response.data);
 
-      const userResponse = await getUser(response.data.user.id);
-      userService.setUserDetails(userResponse.data);
+      const { token, user } = response.data;
+      localStorage.setItem('authToken', token);
+
+      userService.setUserDetails(user.data);
       navigate('/products')
     } catch (error) {
       console.error('Login failed:', error);
