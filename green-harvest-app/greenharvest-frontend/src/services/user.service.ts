@@ -2,6 +2,9 @@ import { BehaviorSubject } from 'rxjs';
 import { User } from '../interfaces/user.interface';
 
 class UserService {
+  getUserDetails() {
+      throw new Error('Method not implemented.');
+  }
   // Create a BehaviorSubject to store user details
   private userDetailsSubject = new BehaviorSubject<User | null>(null);
 
