@@ -11,28 +11,37 @@ const AddProducts: React.FC = () => {
   const [stock, setStock] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [storeId, setStoreId] = useState(''); // Optional: Add store ID field if needed
-  const [createdBy, setCreatedBy] = useState<number | null>(null);
+  const [createdBy, setCreatedBy] = useState(0);
 
   // Retrieve the logged-in user's ID from the userService
   useEffect(() => {
     const currentUser = userService.getCurrentUserDetails();
+    console.log(userService.getCurrentUserDetails())
     if (currentUser) {
       setCreatedBy(currentUser.UserId); // Assuming the user object has an `id` field
     }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    const currentUser = userService.getCurrentUserDetails();
+    console.log(currentUser)
+    if (currentUser) {
+      setCreatedBy(currentUser.UserId); // Assuming the user object has an `id` field
+    }else{
+        setCreatedBy(7);
+    }
+
+    console.log(currentUser)
     e.preventDefault();
 
-    // Ensure StoreID and CreatedBy are set
-    if (!storeId) {
-      alert('Store ID is required.');
-      return;
-    }
-    if (!createdBy) {
-      alert('User is not logged in.');
-      return;
-    }
+    // if (!storeId) {
+    //   alert('Store ID is required.');
+    //   return;
+    // }
+    // if (!createdBy) {
+    //   alert('User is not logged in.');
+    //   return;
+    // }
 
     // Create a new product object conforming to the Product interface
     const newProduct: Product = {
