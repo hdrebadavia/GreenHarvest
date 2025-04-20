@@ -50,17 +50,31 @@ const ProductPage = () => {
 
   return (
     <SharedLayout title="Products">
-      <div className="container mt-4">
-        <div className="mb-4">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search Products"
-            value={searchTerm}
-            onChange={handleSearch}
-          />
+      <div className="container">
+        <div className="row mb-2">
+          <div className="col-lg-9 mb-sm-2">
+            <div className="input-group">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search Products"
+                value={searchTerm}
+                onChange={handleSearch}
+              />
+              <span className="input-group-text">
+                <i className="bi bi-search"></i>
+              </span>
+            </div>
+          </div>
+          <div className="col-lg-3 col-sm-12">
+            <button className="btn btn-primary w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#addProductOffCanvas" aria-controls="addProductOffCanvas">
+              <i className="bi bi-plus"></i>
+              Add Product
+            </button>
+          </div>
         </div>
-        <div className="mb-4 text-center">
+        
+        <div className="mb-4 text-start">
           {/* Toggler Buttons */}
           <button
             className={`btn ${viewMode === 'card' ? 'btn-success' : 'btn-outline-success'} me-2 btn-sm`}
@@ -76,15 +90,13 @@ const ProductPage = () => {
             <i className="bi bi-table"></i>&nbsp;
             Table View
           </button>
-          <button className="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#addProductOffCanvas" aria-controls="addProductOffCanvas">
-            <i className="bi bi-plus"></i>
-            Add Product
-          </button>
         </div>
+
+        {/* Products List */}
         {viewMode === 'card' ? (
           <div className="row">
-            {filteredProducts.map((product) => (
-              <div className="col-12 col-sm-6 col-md-4 mb-4" key={product.ProductId}>
+            {filteredProducts.map((product, index) => (
+              <div className="col-12 col-sm-6 col-md-4 mb-4" key={product.ProductId || index}>
                 <div className="card h-100">
                   <img
                     src={product.imageUrl}
@@ -116,7 +128,7 @@ const ProductPage = () => {
               </thead>
               <tbody>
                 {filteredProducts.map((product, index) => (
-                  <tr key={product.ProductId}>
+                  <tr key={product.ProductId || index}>
                     <td className="align-middle">{index + 1}</td>
                     <td className="align-middle">{product.Name}</td>
                     <td className="align-middle">{product.ProductType}</td>
@@ -138,6 +150,8 @@ const ProductPage = () => {
           </div>
         )}
     </div>
+
+    {/* Offcanvas for Add Product */}
     <div className="offcanvas offcanvas-end" id="addProductOffCanvas" aria-labelledby="offcanvasLabel">
       <div className="offcanvas-header">
         <h5 className="offcanvas-title" id="offcanvasLabel">Add Product</h5>
