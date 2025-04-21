@@ -18,7 +18,7 @@ const Login = () => {
       const { token, user } = response.data;
       localStorage.setItem('authToken', token);
 
-      userService.setUserDetails(user.data);
+      userService.setUserDetails(user);
       navigate('/products')
     } catch (error) {
       console.error('Login failed:', error);
