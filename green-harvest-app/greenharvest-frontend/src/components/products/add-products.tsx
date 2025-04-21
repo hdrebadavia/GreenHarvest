@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { addProduct } from '../../services/api';
+import { addProduct, getProductById } from '../../services/api';
 import { Product } from '../../interfaces/product.interface'; // Import the Product interface
 import { userService } from '../../services/user.service';
+import { useParams } from 'react-router-dom';
 
 interface AddProductsProps {
   onSuccess: (message: string) => void; // Callback function to handle success message
 }
 
 const AddProducts: React.FC<AddProductsProps> = ({ onSuccess }) => {
+  const { productId } = useParams<{ productId: string }>(); // Get productId from URL
+  const [product, setProduct] = useState<Product | null>(null); // Corrected state type
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
@@ -19,30 +22,27 @@ const AddProducts: React.FC<AddProductsProps> = ({ onSuccess }) => {
 
   // Retrieve the logged-in user's ID from the userService
   useEffect(() => {
-    const currentUser = userService.getCurrentUserDetails();
-    console.log(userService.getCurrentUserDetails())
-    if (currentUser) {
-      setCreatedBy(currentUser.UserId); // Assuming the user object has an `id` field
-    }else{
-      setCreatedBy(7);
-  }
+    if (productId) {
+      handleGetProduct();
+    }
   }, []);
 
+  const handleGetProduct = async () => {
+    try {
+      const response = await getProductById(Number(productId));
+      setProduct(response.data);
+      console.log(response.data);
+    } catch (err) { 
+      console.error('Error fetching product details:', err);
+    }
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const currentUser = userService.getCurrentUserDetails();
-    if (currentUser) {
-      setCreatedBy(currentUser.UserId); // Assuming the user object has an `id` field
-    }else{
-        setCreatedBy(7);
-    }
-
+    setCreatedBy(Number(userService.getCurrentUserDetails()?.id));
+ 
     if (!storeId) {
       alert('Store ID is required.');
-      return;
-    }
-    if (!createdBy) {
-      alert('User is not logged in.');
       return;
     }
 
@@ -59,7 +59,6 @@ const AddProducts: React.FC<AddProductsProps> = ({ onSuccess }) => {
       StoreID: parseInt(storeId, 10), // Ensure StoreID is a valid number
       CreatedBy: createdBy, // Set CreatedBy to the logged-in user's ID
     };
-
     try {
       const response = await addProduct(newProduct); // Call the API
       console.log('Product added successfully:', response.data);
