@@ -4,6 +4,8 @@ import SharedLayout from '../shared/shared-layout'; // Import the shared layout
 import { deleteProduct, getProducts, getStoreById } from '../../services/api';
 import AddProducts from './add-products';
 import { Product } from '../../interfaces/product.interface'; // Import the Product interface
+import { useNavigate } from 'react-router-dom';
+import Toast from '../shared/toast';
 
 const ProductPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -14,7 +16,7 @@ const ProductPage = () => {
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
   const [successMessage, setSuccessMessage] = useState(''); // State for success message
   const [showToast, setShowToast] = useState(false); // State to control toast visibility
-
+  const navigate = useNavigate();
 
   const handleGetProducts = async () => {
     try {
@@ -41,6 +43,9 @@ const ProductPage = () => {
     }
   };
 
+  const handleViewProduct = (productId: number) => {
+    navigate(`/products/${productId}`);
+  };
   const handleDeleteProduct = async (productId: number) => {
     try {
       await deleteProduct(productId);
@@ -59,8 +64,6 @@ const ProductPage = () => {
     setSuccessMessage(message);
     setShowToast(true); // Show the toast
 
-
-    // Clear the message after 3 seconds
     setTimeout(() => {
       setSuccessMessage('');
       setShowToast(false)
@@ -97,32 +100,13 @@ const ProductPage = () => {
     <SharedLayout title="Products">
       <div className="container">
         {/* Toast Notification */}
-        <div
-          className={`toast-container position-fixed top-0 end-0 p-3`}
-          style={{ zIndex: 1055 }}
-        >
-          <div
-            className={`toast align-items-center text-bg-success ${
-              showToast ? 'show' : 'hide'
-            }`}
-            role="alert"
-            aria-live="assertive"
-            aria-atomic="true"
-          >
-            <div className="d-flex">
-              <div className="toast-body">
-                {successMessage}
-              </div>
-              <button
-                type="button"
-                className="btn-close btn-close-white me-2 m-auto"
-                aria-label="Close"
-                onClick={() => setShowToast(false)}
-              ></button>
-            </div>
-          </div>
-        </div>
-
+        <Toast
+          show={showToast}
+          message={successMessage}
+          type="success"
+          onClose={() => setShowToast(false)}
+        />
+        
         <div className="row mb-2">
           <div className="col-lg-9 mb-sm-2">
             <div className="input-group">
@@ -178,7 +162,7 @@ const ProductPage = () => {
               (
                 filteredProducts.map((product, index) => (
                   <div className="col-12 col-sm-6 col-md-4 mb-4" key={product.ProductID || index}>
-                    <div className="card h-100">
+                    <div className="card h-100" onClick={() => handleViewProduct(product.ProductID)}>
                       <img
                         src={product.imageUrl}
                         className="card-img-top"
