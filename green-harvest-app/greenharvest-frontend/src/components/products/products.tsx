@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import SharedLayout from '../shared/shared-layout'; // Import the shared layout
-import { getProducts } from '../../services/api';
+import { deleteProduct, getProducts, getStoreById } from '../../services/api';
 import AddProducts from './add-products';
 import { Product } from '../../interfaces/product.interface'; // Import the Product interface
 
@@ -12,20 +12,65 @@ const ProductPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
+  const [successMessage, setSuccessMessage] = useState(''); // State for success message
+  const [showToast, setShowToast] = useState(false); // State to control toast visibility
+
+
+  const handleGetProducts = async () => {
+    try {
+      const response = await getProducts();
+      const productsWithStoreNames = await Promise.all(
+        response.data.map(async (product: Product) => {
+          try {
+            const storeResponse = await getStoreById(product.StoreID);
+            return { ...product, StoreName: storeResponse.data.Name }; // Add StoreName to the product
+          } catch (error) {
+            console.error(`Error fetching store for product ${product.ProductID}:`, error);
+            return { ...product, StoreName: 'Unknown Store' }; // Fallback if store fetch fails
+          }
+        })
+      );
+
+      setProducts(productsWithStoreNames);
+      setFilteredProducts(productsWithStoreNames);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setError('Failed to fetch products.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteProduct = async (productId: number) => {
+    try {
+      await deleteProduct(productId);
+      console.log('Product deleted successfully');
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
+  };
+
+  const handleSuccessMessage = (message: string) => {
+    const dismissButton = document.getElementById('dismissOffcanvasButton');
+    if (dismissButton) {
+      dismissButton.click();
+    }
+
+    setSuccessMessage(message);
+    setShowToast(true); // Show the toast
+
+
+    // Clear the message after 3 seconds
+    setTimeout(() => {
+      setSuccessMessage('');
+      setShowToast(false)
+    }, 3000);
+
+    handleGetProducts();
+  };
 
   useEffect(() => {
-    getProducts()
-      .then((response) => {
-        setProducts(response.data);
-        setFilteredProducts(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching products:', error);
-        setError('Failed to fetch products.');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    handleGetProducts();
   }, []);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,6 +96,33 @@ const ProductPage = () => {
   return (
     <SharedLayout title="Products">
       <div className="container">
+        {/* Toast Notification */}
+        <div
+          className={`toast-container position-fixed top-0 end-0 p-3`}
+          style={{ zIndex: 1055 }}
+        >
+          <div
+            className={`toast align-items-center text-bg-success ${
+              showToast ? 'show' : 'hide'
+            }`}
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+          >
+            <div className="d-flex">
+              <div className="toast-body">
+                {successMessage}
+              </div>
+              <button
+                type="button"
+                className="btn-close btn-close-white me-2 m-auto"
+                aria-label="Close"
+                onClick={() => setShowToast(false)}
+              ></button>
+            </div>
+          </div>
+        </div>
+
         <div className="row mb-2">
           <div className="col-lg-9 mb-sm-2">
             <div className="input-group">
@@ -95,27 +167,38 @@ const ProductPage = () => {
         {/* Products List */}
         {viewMode === 'card' ? (
           <div className="row">
-            {filteredProducts.map((product, index) => (
-              <div className="col-12 col-sm-6 col-md-4 mb-4" key={product.ProductId || index}>
-                <div className="card h-100">
-                  <img
-                    src={product.imageUrl}
-                    className="card-img-top"
-                    alt={product.Name}
-                    style={{ height: '140px', objectFit: 'cover' }}
-                  />
-                  <div className="card-body">
-                    <h5 className="card-title">{product.Name}</h5>
-                    <p className="card-text text-muted">{product.Description}</p>
-                    <h6 className="card-subtitle text-primary">${product.Price}</h6>
+            {filteredProducts.length === 0 ? 
+              (
+                <div className="col-12 text-center">
+                  <div className="alert alert-secondary" role="alert">
+                    <span>No products found.</span>
                   </div>
                 </div>
-              </div>
-            ))}
+              ) : 
+              (
+                filteredProducts.map((product, index) => (
+                  <div className="col-12 col-sm-6 col-md-4 mb-4" key={product.ProductID || index}>
+                    <div className="card h-100">
+                      <img
+                        src={product.imageUrl}
+                        className="card-img-top"
+                        alt={product.Name}
+                        style={{ height: '140px', objectFit: 'cover' }}
+                      />
+                      <div className="card-body">
+                        <h5 className="card-title">{product.Name}</h5>
+                        <p className="card-text text-muted">{product.StoreName}</p>
+                        <h6 className="card-subtitle text-primary">${product.Price}</h6>
+                      </div>
+                    </div>
+                  </div>
+                )
+              )
+              )}
           </div>
         ) : (
           <div className="table-responsive">
-            <table className="table table-striped">
+            <table className="table">
               <thead>
                 <tr>
                   <th>#</th>
@@ -127,24 +210,35 @@ const ProductPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredProducts.map((product, index) => (
-                  <tr key={product.ProductId || index}>
-                    <td className="align-middle">{index + 1}</td>
-                    <td className="align-middle">{product.Name}</td>
-                    <td className="align-middle">{product.ProductType}</td>
-                    <td className="align-middle">${product.Price}</td>
-                    <td className="align-middle">{product.Quantity} {product.Unit}</td>
-                    <td className="align-middle">
-                      <button className="btn btn-danger btn-sm">
-                        <i className="bi bi-trash"></i>
-                      </button>
-                      &nbsp;
-                      <button className="btn btn-warning btn-sm">
-                        <i className="bi bi-pencil"></i>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {filteredProducts.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="text-center">
+                          <div className="alert alert-secondary" role="alert">
+                            <span>No products found.</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredProducts.map((product, index) => (
+                        <tr key={product.ProductID || index}>
+                          <td className="align-middle">{index + 1}</td>
+                          <td className="align-middle">{product.Name}</td>
+                          <td className="align-middle">{product.ProductType}</td>
+                          <td className="align-middle">${product.Price}</td>
+                          <td className="align-middle">{product.Quantity} {product.Unit}</td>
+                          <td className="align-middle">
+                            <button className="btn btn-danger btn-sm" onClick={() => handleDeleteProduct(product.ProductID)}>
+                              <i className="bi bi-trash"></i>
+                            </button>
+                            &nbsp;
+                            <button className="btn btn-warning btn-sm">
+                              <i className="bi bi-pencil"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )
+                }
               </tbody>
             </table>
           </div>
@@ -155,10 +249,10 @@ const ProductPage = () => {
     <div className="offcanvas offcanvas-end" id="addProductOffCanvas" aria-labelledby="offcanvasLabel">
       <div className="offcanvas-header">
         <h5 className="offcanvas-title" id="offcanvasLabel">Add Product</h5>
-        <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close" id="dismissOffcanvasButton"></button>
       </div>
       <div className="offcanvas-body">
-        <AddProducts></AddProducts>
+        <AddProducts onSuccess={handleSuccessMessage}></AddProducts>
       </div>
     </div>
     </SharedLayout>
