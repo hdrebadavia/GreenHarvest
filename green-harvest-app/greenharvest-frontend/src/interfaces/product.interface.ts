@@ -1,5 +1,7 @@
-export interface Product {
-    ProductId: number;
+import { Common } from "./common.interface";
+
+export interface Product extends Common{
+    ProductID: number;
     Name: string;
     Description: string;
     Price: number;
@@ -7,7 +9,7 @@ export interface Product {
     ProductType: string;
     Quantity: number;
     Unit: string;
-    StoreId: number;
-    CreatedBy: number
+    StoreID: number;
+    StoreName? : string;
   }
   
