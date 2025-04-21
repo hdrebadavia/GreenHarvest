@@ -24,18 +24,25 @@ export const register = (
     return api.get(`/users/${userId}`);
   };
 
+  // PRODUCTS
+
   export const getProducts = () => {
     return api.get('/products');
+  }
+
+  export const getProductById = (productId: number) => {
+    return api.get(`/products/${productId}`);
   }
 
   export const addProduct = (data: Product) => {
     return api.post('/products', data);
   };
 
-  export const getStoreById = (storeId: number) => {
-    return api.get(`/stores/${storeId}`);
-  }
-
   export const deleteProduct = (productId: number) => {
     return api.delete(`/products/${productId}`);
+  }
+
+  //STORES
+  export const getStoreById = (storeId: number) => {
+    return api.get(`/stores/${storeId}`);
   }
