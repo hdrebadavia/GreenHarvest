@@ -5,6 +5,7 @@ import ProductPage from './components/products/products';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import ViewProduct from './components/products/view-product';
 
 function App() {
   return (
@@ -15,6 +16,9 @@ function App() {
         <ProtectedRoute>
           <ProductPage />
         </ProtectedRoute>
+      } />
+      <Route path="/products/:productId" element={
+          <ViewProduct/>
       } />
     </Routes>
   );
