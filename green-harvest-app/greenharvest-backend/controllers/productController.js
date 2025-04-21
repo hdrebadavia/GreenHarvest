@@ -85,7 +85,7 @@ const getProductsByStoreId = async (req, res) => {
 // Create a new product
 const createProduct = async (req, res) => {
     try {
-        const { Name, Description, ProductType, Quantity, Price, Unit, StoreID, farmerId, UpdatedBy } = req.body;
+        const { Name, Description, ProductType, Quantity, Price, Unit, StoreID, CreatedBy, UpdatedBy } = req.body;
         const newProduct = await
             Product.create({
                 Name,
@@ -95,7 +95,7 @@ const createProduct = async (req, res) => {
                 Price,
                 Unit,
                 StoreID,
-                CreatedBy: farmerId,
+                CreatedBy,
                 UpdatedBy });
         res.status(201).json(newProduct);
     } catch (error) {
