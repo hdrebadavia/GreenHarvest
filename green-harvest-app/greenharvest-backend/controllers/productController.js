@@ -30,20 +30,22 @@ const getProducts = async (req, res) => {
 // Get product by ID
 const getProductById = async (req, res) => {
     try {
-        const product = await Product.findByPk(req.params.id, {
-            include: {
-                model: db.User,
-                as: "Creator",
-                attributes: ["FirstName", "LastName"]
-            }
-        });
+        const product = await Product.findByPk(req.params.id
+            // , {
+            // include: {
+            //     model: db.User,
+            //     as: "Creator",
+            //     attributes: ["FirstName", "LastName"]
+            // }
+        // }
+        );
         if (!product) return res.status(404).json({ message: "Product not found" });
 
-        const productWithFullName = {
-            ...product.toJSON(),
-            CreatedByFullName: `${product.Creator.FirstName} ${product.Creator.LastName}`
-        };
-        res.json(productWithFullName);
+        // const productWithFullName = {
+        //     ...product.toJSON(),
+        //     CreatedByFullName: `${product.Creator.FirstName} ${product.Creator.LastName}`
+        // };
+        res.json(product);
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
             const messages = error.errors.map(err => err.message);
