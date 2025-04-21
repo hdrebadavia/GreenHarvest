@@ -31,3 +31,11 @@ export const register = (
   export const addProduct = (data: Product) => {
     return api.post('/products', data);
   };
+
+  export const getStoreById = (storeId: number) => {
+    return api.get(`/stores/${storeId}`);
+  }
+
+  export const deleteProduct = (productId: number) => {
+    return api.delete(`/products/${productId}`);
+  }
