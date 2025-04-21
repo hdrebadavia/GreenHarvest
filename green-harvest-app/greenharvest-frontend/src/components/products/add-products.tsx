@@ -3,7 +3,11 @@ import { addProduct } from '../../services/api';
 import { Product } from '../../interfaces/product.interface'; // Import the Product interface
 import { userService } from '../../services/user.service';
 
-const AddProducts: React.FC = () => {
+interface AddProductsProps {
+  onSuccess: (message: string) => void; // Callback function to handle success message
+}
+
+const AddProducts: React.FC<AddProductsProps> = ({ onSuccess }) => {
   const [productName, setProductName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
@@ -19,33 +23,32 @@ const AddProducts: React.FC = () => {
     console.log(userService.getCurrentUserDetails())
     if (currentUser) {
       setCreatedBy(currentUser.UserId); // Assuming the user object has an `id` field
-    }
+    }else{
+      setCreatedBy(7);
+  }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     const currentUser = userService.getCurrentUserDetails();
-    console.log(currentUser)
     if (currentUser) {
       setCreatedBy(currentUser.UserId); // Assuming the user object has an `id` field
     }else{
         setCreatedBy(7);
     }
 
-    console.log(currentUser)
-    e.preventDefault();
-
-    // if (!storeId) {
-    //   alert('Store ID is required.');
-    //   return;
-    // }
-    // if (!createdBy) {
-    //   alert('User is not logged in.');
-    //   return;
-    // }
+    if (!storeId) {
+      alert('Store ID is required.');
+      return;
+    }
+    if (!createdBy) {
+      alert('User is not logged in.');
+      return;
+    }
 
     // Create a new product object conforming to the Product interface
     const newProduct: Product = {
-      ProductId: 0, // Assuming the backend auto-generates this
+      ProductID: 0, // Assuming the backend auto-generates this
       Name: productName,
       Description: description,
       Price: parseFloat(price),
@@ -53,13 +56,15 @@ const AddProducts: React.FC = () => {
       ProductType: category,
       Quantity: parseInt(stock, 10),
       Unit: 'pcs', // Default unit, adjust as needed
-      StoreId: parseInt(storeId, 10), // Ensure StoreID is a valid number
+      StoreID: parseInt(storeId, 10), // Ensure StoreID is a valid number
       CreatedBy: createdBy, // Set CreatedBy to the logged-in user's ID
     };
 
     try {
       const response = await addProduct(newProduct); // Call the API
       console.log('Product added successfully:', response.data);
+
+      onSuccess('Product added successfully!');
 
       // Reset form fields
       setProductName('');
@@ -69,6 +74,7 @@ const AddProducts: React.FC = () => {
       setStock('');
       setImageUrl('');
       setStoreId('');
+
     } catch (error) {
       console.error('Error adding product:', error);
       if (
