@@ -17,6 +17,7 @@ const ProductPage = () => {
   const [successMessage, setSuccessMessage] = useState(''); // State for success message
   const [showToast, setShowToast] = useState(false); // State to control toast visibility
   const navigate = useNavigate();
+  const [placeholderImage, setPlaceholderImage] = useState<string>('https://i0.wp.com/port2flavors.com/wp-content/uploads/2022/07/placeholder-614.png?fit=1200%2C800&ssl=1'); // Placeholder image URL
 
   const handleGetProducts = async () => {
     try {
@@ -46,6 +47,7 @@ const ProductPage = () => {
   const handleViewProduct = (productId: number) => {
     navigate(`/products/${productId}`);
   };
+
   const handleDeleteProduct = async (productId: number) => {
     try {
       await deleteProduct(productId);
@@ -106,9 +108,12 @@ const ProductPage = () => {
           type="success"
           onClose={() => setShowToast(false)}
         />
-        
+
         <div className="row mb-2">
-          <div className="col-lg-9 mb-sm-2">
+          <div className="col-lg-5 col-sm-12">
+            <h3 className="text-muted fw-bolder">Store</h3>
+          </div>
+          <div className="col-lg-7 mb-sm-2">
             <div className="input-group">
               <input
                 type="text"
@@ -122,49 +127,52 @@ const ProductPage = () => {
               </span>
             </div>
           </div>
-          <div className="col-lg-3 col-sm-12">
-            <button className="btn btn-primary w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#addProductOffCanvas" aria-controls="addProductOffCanvas">
+        </div>
+
+        <div className="mb-4 text-start justify-content-end d-flex flex-wrap">
+          {/* Toggler Buttons */}
+          <div className="border-end">
+            <button
+              className={`btn ${viewMode === 'card' ? 'btn-success' : 'btn-outline-success'} me-2 btn-sm`}
+              onClick={() => setViewMode('card')}
+            >
+              <i className="bi bi-grid"></i>&nbsp;
+              Card View
+            </button>
+            <button
+              className={`btn ${viewMode === 'table' ? 'btn-success' : 'btn-outline-success'} me-2 btn-sm`}
+              onClick={() => setViewMode('table')}
+            >
+              <i className="bi bi-table"></i>&nbsp;
+              Table View
+            </button>
+          </div>
+          <div className="ps-1 ms-1">
+            <button className="btn btn-sm btn-primary w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#addProductOffCanvas" aria-controls="addProductOffCanvas">
               <i className="bi bi-plus"></i>
               Add Product
             </button>
           </div>
-        </div>
-        
-        <div className="mb-4 text-start">
-          {/* Toggler Buttons */}
-          <button
-            className={`btn ${viewMode === 'card' ? 'btn-success' : 'btn-outline-success'} me-2 btn-sm`}
-            onClick={() => setViewMode('card')}
-          >
-            <i className="bi bi-grid"></i>&nbsp;
-            Card View
-          </button>
-          <button
-            className={`btn ${viewMode === 'table' ? 'btn-success' : 'btn-outline-success'} me-2 btn-sm`}
-            onClick={() => setViewMode('table')}
-          >
-            <i className="bi bi-table"></i>&nbsp;
-            Table View
-          </button>
+
         </div>
 
         {/* Products List */}
         {viewMode === 'card' ? (
           <div className="row">
-            {filteredProducts.length === 0 ? 
+            {filteredProducts.length === 0 ?
               (
                 <div className="col-12 text-center">
                   <div className="alert alert-secondary" role="alert">
                     <span>No products found.</span>
                   </div>
                 </div>
-              ) : 
+              ) :
               (
                 filteredProducts.map((product, index) => (
                   <div className="col-12 col-sm-6 col-md-4 mb-4" key={product.ProductID || index}>
                     <div className="card h-100" onClick={() => handleViewProduct(product.ProductID)}>
                       <img
-                        src={product.imageUrl}
+                        src={product.imageUrl? product.imageUrl : placeholderImage}
                         className="card-img-top"
                         alt={product.Name}
                         style={{ height: '140px', objectFit: 'cover' }}
@@ -240,7 +248,7 @@ const ProductPage = () => {
       </div>
     </div>
     </SharedLayout>
-    
+
   );
 };
 
