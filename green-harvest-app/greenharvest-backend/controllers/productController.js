@@ -60,21 +60,22 @@ const getProductsByStoreId = async (req, res) => {
     try {
         const storeId = req.params.storeId;
         const products = await Product.findAll({
-            where: { StoreId: storeId }
+            where: { StoreId: Number(storeId) }
         });
 
         if (!products.length) return res.status(404).json({ message: "No products found for this store" });
         
-        products.forEach(product => {
-            console.log(product.CreatedBy)
-            const creator = db.User.findByPk(product.CreatedBy);
+        // products.forEach(product => {
+        //     console.log(product.CreatedBy)
+        //     const creator = db.User.findByPk(product.CreatedBy);
 
-            const productsWithFullName = products.map(product => ({
-                ...product.toJSON(),
-                CreatedByFullName: `${creator.FirstName} ${creator.LastName}`
-            }));
-            res.json(productsWithFullName);
-        }); 
+        //     const productsWithFullName = products.map(product => ({
+        //         ...product.toJSON(),
+        //         CreatedByFullName: `${creator.FirstName} ${creator.LastName}`
+        //     }));
+        //     res.json(productsWithFullName);
+        // }); 
+        res.json(products)
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
             const messages = error.errors.map(err => err.message);
