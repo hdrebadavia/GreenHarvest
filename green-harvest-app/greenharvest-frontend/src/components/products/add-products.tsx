@@ -6,9 +6,10 @@ import { useParams } from 'react-router-dom';
 
 interface AddProductsProps {
   onSuccess: (message: string) => void; // Callback function to handle success message
+  productIdParam?: number
 }
 
-const AddProducts: React.FC<AddProductsProps> = ({ onSuccess }) => {
+const AddProducts: React.FC<AddProductsProps> = ({ onSuccess, productIdParam }) => {
   const { productId } = useParams<{ productId: string }>(); // Get productId from URL
   const [product, setProduct] = useState<Product | null>(null); // Corrected state type
   const [productName, setProductName] = useState('');
@@ -24,6 +25,7 @@ const AddProducts: React.FC<AddProductsProps> = ({ onSuccess }) => {
   useEffect(() => {
     if (productId) {
       handleGetProduct();
+      console.log("Product ID: ", productIdParam)
     }
   }, []);
 
