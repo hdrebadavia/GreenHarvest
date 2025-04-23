@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import SharedLayout from '../shared/shared-layout'; // Import the shared layout
-import { deleteProduct, getProducts, getStoreById } from '../../services/api';
+import { deleteProduct, getProducts, getProductsByStoreId, getStoreById } from '../../services/api';
 import AddProducts from './add-products';
 import { Product } from '../../interfaces/product.interface'; // Import the Product interface
 import { useNavigate } from 'react-router-dom';
 import Toast from '../shared/toast';
+import { Store } from '../../interfaces/store.interface';
 
 const ProductPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [store, setStore] = useState<Store>();
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
@@ -18,24 +20,48 @@ const ProductPage = () => {
   const [showToast, setShowToast] = useState(false); // State to control toast visibility
   const navigate = useNavigate();
   const [placeholderImage, setPlaceholderImage] = useState<string>('https://i0.wp.com/port2flavors.com/wp-content/uploads/2022/07/placeholder-614.png?fit=1200%2C800&ssl=1'); // Placeholder image URL
+  const [storeId, setStoreId] = useState<number>(1)
+  const [productId, setProductId] = useState<number | null>(null)
 
   const handleGetProducts = async () => {
     try {
-      const response = await getProducts();
-      const productsWithStoreNames = await Promise.all(
-        response.data.map(async (product: Product) => {
-          try {
-            const storeResponse = await getStoreById(product.StoreID);
-            return { ...product, StoreName: storeResponse.data.Name }; // Add StoreName to the product
-          } catch (error) {
-            console.error(`Error fetching store for product ${product.ProductID}:`, error);
-            return { ...product, StoreName: 'Unknown Store' }; // Fallback if store fetch fails
-          }
-        })
-      );
+      if(storeId){
+        const response = await getProductsByStoreId(storeId);
+        const productsWithStoreNames = await Promise.all(
+          response.data.map(async (product: Product) => {
+            try {
+              const storeResponse = await getStoreById(product.StoreID);
+              return { ...product, StoreName: storeResponse.data.Name }; // Add StoreName to the product
+            } catch (error) {
+              console.error(`Error fetching store for product ${product.ProductID}:`, error);
+              return { ...product, StoreName: 'Unknown Store' }; // Fallback if store fetch fails
+            }
+          })
+        );
+        
+        const storeData = await getStoreById(storeId)
 
-      setProducts(productsWithStoreNames);
-      setFilteredProducts(productsWithStoreNames);
+        setStore(storeData.data)
+        setProducts(productsWithStoreNames);
+        setFilteredProducts(productsWithStoreNames);
+      }else{
+        const response = await getProducts();
+        const productsWithStoreNames = await Promise.all(
+          response.data.map(async (product: Product) => {
+            try {
+              const storeResponse = await getStoreById(product.StoreID);
+              return { ...product, StoreName: storeResponse.data.Name }; // Add StoreName to the product
+            } catch (error) {
+              console.error(`Error fetching store for product ${product.ProductID}:`, error);
+              return { ...product, StoreName: 'Unknown Store' }; // Fallback if store fetch fails
+            }
+          })
+        );
+  
+        setProducts(productsWithStoreNames);
+        setFilteredProducts(productsWithStoreNames);
+      }
+      
     } catch (error) {
       console.error('Error fetching products:', error);
       setError('Failed to fetch products.');
@@ -74,10 +100,6 @@ const ProductPage = () => {
     handleGetProducts();
   };
 
-  useEffect(() => {
-    handleGetProducts();
-  }, []);
-
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
@@ -90,6 +112,23 @@ const ProductPage = () => {
       setFilteredProducts(filtered)
     }
   }
+
+  const handleAddProduct = () => {
+    setProductId(null); // Set productId to null for Add mode
+  };
+
+  const handleEditProduct = (productId: number) => {
+    setProductId(productId); // Set productId for Edit mode
+  };
+
+  const handleCloseOffcanvas = () => {
+    setProductId(null); // Reset productId when the Offcanvas is closed
+  };
+
+  useEffect(() => {
+    handleGetProducts();
+  }, []);
+
   if (loading) {
     return <Typography textAlign="center" mt={5}>Loading products...</Typography>;
   }
@@ -111,7 +150,9 @@ const ProductPage = () => {
 
         <div className="row mb-2">
           <div className="col-lg-5 col-sm-12">
-            <h3 className="text-muted fw-bolder">Store</h3>
+            <h3 className="text-muted fw-bolder">
+              {store?.StoreId ? (<span> {store?.Name}</span>) : (<span>Store</span>)}
+            </h3>
           </div>
           <div className="col-lg-7 mb-sm-2">
             <div className="input-group">
@@ -223,7 +264,7 @@ const ProductPage = () => {
                               <i className="bi bi-trash"></i>
                             </button>
                             &nbsp;
-                            <button className="btn btn-warning btn-sm">
+                            <button className="btn btn-warning btn-sm"  data-bs-toggle="offcanvas" data-bs-target="#addProductOffCanvas" aria-controls="addProductOffCanvas" onClick={() => handleEditProduct(product.ProductID)}>
                               <i className="bi bi-pencil"></i>
                             </button>
                           </td>
@@ -241,10 +282,15 @@ const ProductPage = () => {
     <div className="offcanvas offcanvas-end" id="addProductOffCanvas" aria-labelledby="offcanvasLabel">
       <div className="offcanvas-header">
         <h5 className="offcanvas-title" id="offcanvasLabel">Add Product</h5>
-        <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close" id="dismissOffcanvasButton"></button>
+        <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close" id="dismissOffcanvasButton" onClick={handleCloseOffcanvas}></button>
       </div>
       <div className="offcanvas-body">
-        <AddProducts onSuccess={handleSuccessMessage}></AddProducts>
+      {productId !== undefined && (
+            <AddProducts
+              onSuccess={handleSuccessMessage}
+              productIdParam={productId!}
+            />
+          )}
       </div>
     </div>
     </SharedLayout>
