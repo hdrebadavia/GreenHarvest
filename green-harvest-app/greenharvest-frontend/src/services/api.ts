@@ -47,6 +47,10 @@ export const register = (
     return api.get(`/products/store/${storeId}`)
   }
   //STORES
+  export const getStores = () => {
+    return api.get('/stores');
+  }
+
   export const getStoreById = (storeId: number) => {
     return api.get(`/stores/${storeId}`);
   }
