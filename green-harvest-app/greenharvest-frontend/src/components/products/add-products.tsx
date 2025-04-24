@@ -6,7 +6,8 @@ import { useParams } from 'react-router-dom';
 
 interface AddProductsProps {
   onSuccess: (message: string) => void; // Callback function to handle success message
-  productIdParam?: number
+  productIdParam?: number;
+  storeId: number
 }
 
 const AddProducts: React.FC<AddProductsProps> = ({ onSuccess, productIdParam }) => {
@@ -26,6 +27,7 @@ const AddProducts: React.FC<AddProductsProps> = ({ onSuccess, productIdParam }) 
     if (productId) {
       handleGetProduct();
       console.log("Product ID: ", productIdParam)
+      setStoreId(storeId)
     }
   }, []);
 
@@ -34,15 +36,15 @@ const AddProducts: React.FC<AddProductsProps> = ({ onSuccess, productIdParam }) 
       const response = await getProductById(Number(productId));
       setProduct(response.data);
       console.log(response.data);
-    } catch (err) { 
+    } catch (err) {
       console.error('Error fetching product details:', err);
     }
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setCreatedBy(Number(userService.getCurrentUserDetails()?.id));
- 
+
     if (!storeId) {
       alert('Store ID is required.');
       return;
