@@ -15,6 +15,7 @@ app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/products", require("./routes/productRoutes"));
 app.use("/api/stores", require("./routes/storeRoutes"));
 app.use("/api/orders", require("./routes/orderRoutes"));
+app.use("/api/cart", require("./routes/cartRoutes"));
 
 // Swagger setup
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
