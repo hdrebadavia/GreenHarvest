@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import ProductPage from './components/products/products';
@@ -8,17 +8,29 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import ViewProduct from './components/products/view-product';
 
 function App() {
+  const hasSessionToken = !!sessionStorage.getItem('authToken')
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      {/* Login Route: Only accessible if NOT logged in */}
+      <Route
+        path="/"
+        element={hasSessionToken ? <Navigate to="/products" replace /> : <Login />}
+      />
+
+      {/* Register Route: Often also restricted if logged in */}
+      <Route
+        path="/register"
+        element={hasSessionToken ? <Navigate to="/products" replace /> : <Register />}
+      />
+
+      {/* Protected Routes: Require login */}
       <Route path="/products" element={
         <ProtectedRoute>
           <ProductPage />
         </ProtectedRoute>
       } />
       <Route path="/products/:productId" element={
-          <ViewProduct/>
+           <ViewProduct/>
       } />
     </Routes>
   );
