@@ -28,6 +28,7 @@ const AddProducts: React.FC<AddProductsProps> = ({ onSuccess, productIdParam }) 
       handleGetProduct();
       console.log("Product ID: ", productIdParam)
       setStoreId(storeId)
+      console.log(storeId)
     }
   }, []);
 
@@ -43,8 +44,8 @@ const AddProducts: React.FC<AddProductsProps> = ({ onSuccess, productIdParam }) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setCreatedBy(Number(userService.getCurrentUserDetails()?.id));
-
+    setCreatedBy(Number(sessionStorage.getItem('user')));
+    console.log(createdBy)
     if (!storeId) {
       alert('Store ID is required.');
       return;
@@ -60,7 +61,7 @@ const AddProducts: React.FC<AddProductsProps> = ({ onSuccess, productIdParam }) 
       ProductType: category,
       Quantity: parseInt(stock, 10),
       Unit: 'pcs', // Default unit, adjust as needed
-      StoreID: parseInt(storeId, 10), // Ensure StoreID is a valid number
+      StoreID: parseInt(storeId), // Ensure StoreID is a valid number
       CreatedBy: createdBy, // Set CreatedBy to the logged-in user's ID
     };
     try {
@@ -171,19 +172,6 @@ const AddProducts: React.FC<AddProductsProps> = ({ onSuccess, productIdParam }) 
             className="form-control"
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="storeId" className="form-label">
-            Store ID:
-          </label>
-          <input
-            type="number"
-            id="storeId"
-            className="form-control"
-            value={storeId}
-            onChange={(e) => setStoreId(e.target.value)}
-            required
           />
         </div>
         <button type="submit" className="btn btn-primary w-100">
