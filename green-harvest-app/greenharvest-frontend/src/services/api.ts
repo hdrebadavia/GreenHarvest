@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Product } from '../interfaces/product.interface';
+import { CartItems } from '../interfaces/cart.interface';
 
 const api = axios.create({
   baseURL: 'http://localhost:5001/api', // adjust to match your ASP.NET backend
@@ -9,8 +10,8 @@ export const login = (data: { EmailAddress: string; Password: string }) =>
   api.post('/users/login', data);
 
 export const register = (
-    data: { 
-        FirstName: string; 
+    data: {
+        FirstName: string;
         MiddleName: string;
         LastName: string;
         EmailAddress: string;
@@ -48,4 +49,13 @@ export const register = (
   //STORES
   export const getStoreById = (storeId: number) => {
     return api.get(`/stores/${storeId}`);
+  }
+
+  //CART
+  export const getCartItems = (userId: number) => {
+    return api.get(`/cart/${userId}`);
+  }
+
+  export const addCartItem = (data: CartItems) => {
+    return api.post(`/cart`, data);
   }
