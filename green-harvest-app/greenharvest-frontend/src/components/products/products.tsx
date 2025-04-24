@@ -38,7 +38,7 @@ const ProductPage = () => {
             }
           })
         );
-        
+
         const storeData = await getStoreById(storeId)
 
         setStore(storeData.data)
@@ -57,11 +57,11 @@ const ProductPage = () => {
             }
           })
         );
-  
+
         setProducts(productsWithStoreNames);
         setFilteredProducts(productsWithStoreNames);
       }
-      
+
     } catch (error) {
       console.error('Error fetching products:', error);
       setError('Failed to fetch products.');
@@ -279,7 +279,7 @@ const ProductPage = () => {
     </div>
 
     {/* Offcanvas for Add Product */}
-    <div className="offcanvas offcanvas-end" id="addProductOffCanvas" aria-labelledby="offcanvasLabel">
+    <div className="offcanvas offcanvas-end m-3 rounded-4 p-3" id="addProductOffCanvas" aria-labelledby="offcanvasLabel">
       <div className="offcanvas-header">
         <h5 className="offcanvas-title" id="offcanvasLabel">Add Product</h5>
         <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close" id="dismissOffcanvasButton" onClick={handleCloseOffcanvas}></button>
