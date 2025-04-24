@@ -1,0 +1,14 @@
+/* Scoped to green-tab-nav component only */
+.green-tab-nav .nav-pills .nav-link.active {
+    background-color: #198754;
+    color: white;
+  }
+
+  .green-tab-nav .nav-pills .nav-link {
+    color: #198754;
+  }
+
+  .green-tab-nav .nav-pills .nav-link:hover {
+    background-color: #d1e7dd;
+    color: #198754;
+  }
