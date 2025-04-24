@@ -18,6 +18,7 @@ const ViewProduct: React.FC = () => {
 
   const navigate = useNavigate();
 
+
   useEffect(() => {
     const handleGetProduct = async () => {
       try {
@@ -61,7 +62,7 @@ const ViewProduct: React.FC = () => {
 
   const handleAddCartItem = async (product: Product, quantity: number) => {
     console.log(product)
-    const createdBy = Number(userService.getCurrentUserDetails()?.id)
+    const createdBy = Number(sessionStorage.getItem('user'))
     console.log(createdBy)
     const newCartItem: CartItems = {
       ProductId: product.ProductID,
