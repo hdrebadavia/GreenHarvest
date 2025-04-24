@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import SharedLayout from '../shared/shared-layout'; // Import the shared layout
-import { deleteProduct, getProducts, getProductsByStoreId, getStoreById } from '../../services/api';
+import { deleteProduct, getProducts, getProductsByStoreId, getStoreById, getStores } from '../../services/api';
 import AddProducts from './add-products';
 import { Product } from '../../interfaces/product.interface'; // Import the Product interface
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +11,7 @@ import { Store } from '../../interfaces/store.interface';
 const ProductPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [store, setStore] = useState<Store>();
+  const [stores, setStores] = useState<Store[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
@@ -125,8 +126,19 @@ const ProductPage = () => {
     setProductId(null); // Reset productId when the Offcanvas is closed
   };
 
+  const handleGetStores = async () => {
+    try{
+      const response = await getStores();
+      setStores(response.data);
+      console.log(stores)
+    }catch(err){
+      console.error('Error fetching stores:', err);
+    }
+  };
+
   useEffect(() => {
     handleGetProducts();
+    handleGetStores();
   }, []);
 
   if (loading) {
@@ -139,7 +151,7 @@ const ProductPage = () => {
 
   return (
     <SharedLayout title="Products">
-      <div className="container">
+      <div className="">
         {/* Toast Notification */}
         <Toast
           show={showToast}
@@ -148,134 +160,148 @@ const ProductPage = () => {
           onClose={() => setShowToast(false)}
         />
 
-        <div className="row mb-2">
-          <div className="col-lg-5 col-sm-12">
-            <h3 className="text-muted fw-bolder">
-              {store?.StoreId ? (<span> {store?.Name}</span>) : (<span>Store</span>)}
-            </h3>
+        <div className="row mx-5">
+          <div className="col-lg-2 border-end">
+            <ul className="list-group list-group-flush">
+              {stores.map((store) => (
+                <li className="list-group-item fw-medium text-end" key={store.StoreId} onClick={() => setStoreId(store.StoreId)}>
+                  {store.Name}
+                </li>
+              ))}
+            </ul>
           </div>
-          <div className="col-lg-7 mb-sm-2">
-            <div className="input-group">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Search Products"
-                value={searchTerm}
-                onChange={handleSearch}
-              />
-              <span className="input-group-text">
-                <i className="bi bi-search"></i>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-4 text-start justify-content-end d-flex flex-wrap">
-          {/* Toggler Buttons */}
-          <div className="border-end">
-            <button
-              className={`btn ${viewMode === 'card' ? 'btn-success' : 'btn-outline-success'} me-2 btn-sm`}
-              onClick={() => setViewMode('card')}
-            >
-              <i className="bi bi-grid"></i>&nbsp;
-              Card View
-            </button>
-            <button
-              className={`btn ${viewMode === 'table' ? 'btn-success' : 'btn-outline-success'} me-2 btn-sm`}
-              onClick={() => setViewMode('table')}
-            >
-              <i className="bi bi-table"></i>&nbsp;
-              Table View
-            </button>
-          </div>
-          <div className="ps-1 ms-1">
-            <button className="btn btn-sm btn-primary w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#addProductOffCanvas" aria-controls="addProductOffCanvas">
-              <i className="bi bi-plus"></i>
-              Add Product
-            </button>
-          </div>
-
-        </div>
-
-        {/* Products List */}
-        {viewMode === 'card' ? (
-          <div className="row">
-            {filteredProducts.length === 0 ?
-              (
-                <div className="col-12 text-center">
-                  <div className="alert alert-secondary" role="alert">
-                    <span>No products found.</span>
-                  </div>
+          <div className="col-lg-10 col-sm-12 px-5">
+            <div className="row mb-2">
+              <div className="col-lg-5 col-sm-12">
+                <h3 className="text-muted fw-bolder">
+                  {store?.StoreId ? (<span> {store?.Name}</span>) : (<span>Store</span>)}
+                </h3>
+              </div>
+              <div className="col-lg-7 mb-sm-2">
+                <div className="input-group">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search Products"
+                    value={searchTerm}
+                    onChange={handleSearch}
+                  />
+                  <span className="input-group-text">
+                    <i className="bi bi-search"></i>
+                  </span>
                 </div>
-              ) :
-              (
-                filteredProducts.map((product, index) => (
-                  <div className="col-12 col-sm-6 col-md-4 mb-4" key={product.ProductID || index}>
-                    <div className="card h-100" onClick={() => handleViewProduct(product.ProductID)}>
-                      <img
-                        src={product.imageUrl? product.imageUrl : placeholderImage}
-                        className="card-img-top"
-                        alt={product.Name}
-                        style={{ height: '140px', objectFit: 'cover' }}
-                      />
-                      <div className="card-body">
-                        <h5 className="card-title">{product.Name}</h5>
-                        <p className="card-text text-muted">{product.StoreName}</p>
-                        <h6 className="card-subtitle text-primary">${product.Price}</h6>
+              </div>
+            </div>
+
+            <div className="mb-4 text-start justify-content-end d-flex flex-wrap">
+              {/* Toggler Buttons */}
+              <div className="border-end">
+                <button
+                  className={`btn ${viewMode === 'card' ? 'btn-success' : 'btn-outline-success'} me-2 btn-sm`}
+                  onClick={() => setViewMode('card')}
+                >
+                  <i className="bi bi-grid"></i>&nbsp;
+                  Card View
+                </button>
+                <button
+                  className={`btn ${viewMode === 'table' ? 'btn-success' : 'btn-outline-success'} me-2 btn-sm`}
+                  onClick={() => setViewMode('table')}
+                >
+                  <i className="bi bi-table"></i>&nbsp;
+                  Table View
+                </button>
+              </div>
+              <div className="ps-1 ms-1">
+                <button className="btn btn-sm btn-primary w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#addProductOffCanvas" aria-controls="addProductOffCanvas">
+                  <i className="bi bi-plus"></i>
+                  Add Product
+                </button>
+              </div>
+
+            </div>
+
+            {/* Products List */}
+            {viewMode === 'card' ? (
+              <div className="row">
+                {filteredProducts.length === 0 ?
+                  (
+                    <div className="col-12 text-center">
+                      <div className="alert alert-secondary" role="alert">
+                        <span>No products found.</span>
                       </div>
                     </div>
-                  </div>
-                )
-              )
-              )}
-          </div>
-        ) : (
-          <div className="table-responsive">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Product Name</th>
-                  <th>Product Type</th>
-                  <th>Price</th>
-                  <th>Quantity</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredProducts.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} className="text-center">
-                          <div className="alert alert-secondary" role="alert">
-                            <span>No products found.</span>
+                  ) :
+                  (
+                    filteredProducts.map((product, index) => (
+                      <div className="col-12 col-sm-6 col-md-4 mb-4" key={product.ProductID || index}>
+                        <div className="card h-100" onClick={() => handleViewProduct(product.ProductID)}>
+                          <img
+                            src={product.imageUrl? product.imageUrl : placeholderImage}
+                            className="card-img-top"
+                            alt={product.Name}
+                            style={{ height: '140px', objectFit: 'cover' }}
+                          />
+                          <div className="card-body">
+                            <h5 className="card-title">{product.Name}</h5>
+                            <p className="card-text text-muted">{product.StoreName}</p>
+                            <h6 className="card-subtitle text-primary">${product.Price}</h6>
                           </div>
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredProducts.map((product, index) => (
-                        <tr key={product.ProductID || index}>
-                          <td className="align-middle">{index + 1}</td>
-                          <td className="align-middle">{product.Name}</td>
-                          <td className="align-middle">{product.ProductType}</td>
-                          <td className="align-middle">${product.Price}</td>
-                          <td className="align-middle">{product.Quantity} {product.Unit}</td>
-                          <td className="align-middle">
-                            <button className="btn btn-danger btn-sm" onClick={() => handleDeleteProduct(product.ProductID)}>
-                              <i className="bi bi-trash"></i>
-                            </button>
-                            &nbsp;
-                            <button className="btn btn-warning btn-sm"  data-bs-toggle="offcanvas" data-bs-target="#addProductOffCanvas" aria-controls="addProductOffCanvas" onClick={() => handleEditProduct(product.ProductID)}>
-                              <i className="bi bi-pencil"></i>
-                            </button>
-                          </td>
-                        </tr>
-                      ))
+                        </div>
+                      </div>
                     )
-                }
-              </tbody>
-            </table>
+                  )
+                  )}
+              </div>
+            ) : (
+              <div className="table-responsive">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Product Name</th>
+                      <th>Product Type</th>
+                      <th>Price</th>
+                      <th>Quantity</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredProducts.length === 0 ? (
+                          <tr>
+                            <td colSpan={6} className="text-center">
+                              <div className="alert alert-secondary" role="alert">
+                                <span>No products found.</span>
+                              </div>
+                            </td>
+                          </tr>
+                        ) : (
+                          filteredProducts.map((product, index) => (
+                            <tr key={product.ProductID || index}>
+                              <td className="align-middle">{index + 1}</td>
+                              <td className="align-middle">{product.Name}</td>
+                              <td className="align-middle">{product.ProductType}</td>
+                              <td className="align-middle">${product.Price}</td>
+                              <td className="align-middle">{product.Quantity} {product.Unit}</td>
+                              <td className="align-middle">
+                                <button className="btn btn-danger btn-sm" onClick={() => handleDeleteProduct(product.ProductID)}>
+                                  <i className="bi bi-trash"></i>
+                                </button>
+                                &nbsp;
+                                <button className="btn btn-warning btn-sm"  data-bs-toggle="offcanvas" data-bs-target="#addProductOffCanvas" aria-controls="addProductOffCanvas" onClick={() => handleEditProduct(product.ProductID)}>
+                                  <i className="bi bi-pencil"></i>
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )
+                    }
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
-        )}
+        </div>
+
     </div>
 
     {/* Offcanvas for Add Product */}
@@ -289,6 +315,7 @@ const ProductPage = () => {
             <AddProducts
               onSuccess={handleSuccessMessage}
               productIdParam={productId!}
+              storeId={storeId}
             />
           )}
       </div>
