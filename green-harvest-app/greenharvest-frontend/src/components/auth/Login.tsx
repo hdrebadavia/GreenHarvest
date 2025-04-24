@@ -16,7 +16,10 @@ const Login = () => {
       console.log('Logged in!', response.data);
 
       const { token, user } = response.data;
-      localStorage.setItem('authToken', token);
+      sessionStorage.setItem('authToken', token);
+      sessionStorage.setItem('user', user.id);
+      sessionStorage.setItem('role', user.role);
+
 
       userService.setUserDetails(user);
       navigate('/products')
