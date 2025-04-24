@@ -31,12 +31,12 @@ const getProducts = async (req, res) => {
 const getProductById = async (req, res) => {
     try {
         const product = await Product.findByPk(req.params.id
-            // , {
-            // include: {
-            //     model: db.User,
-            //     as: "Creator",
-            //     attributes: ["FirstName", "LastName"]
-            // }
+        //     , {
+        //     include: {
+        //         model: db.User,
+        //         as: "Creator",
+        //         attributes: ["FirstName", "LastName"]
+        //     }
         // }
         );
         if (!product) return res.status(404).json({ message: "Product not found" });
@@ -64,7 +64,7 @@ const getProductsByStoreId = async (req, res) => {
         });
 
         if (!products.length) return res.status(404).json({ message: "No products found for this store" });
-        
+
         // products.forEach(product => {
         //     console.log(product.CreatedBy)
         //     const creator = db.User.findByPk(product.CreatedBy);
@@ -74,7 +74,7 @@ const getProductsByStoreId = async (req, res) => {
         //         CreatedByFullName: `${creator.FirstName} ${creator.LastName}`
         //     }));
         //     res.json(productsWithFullName);
-        // }); 
+        // });
         res.json(products)
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
