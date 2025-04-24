@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { getProductById, getStoreById } from '../../services/api';
+import { addCartItem, getProductById, getStoreById } from '../../services/api';
 import { Product } from '../../interfaces/product.interface';
 import SharedLayout from '../shared/shared-layout';
 import { useNavigate, useParams } from 'react-router-dom';
+import { CartItems } from '../../interfaces/cart.interface';
+import { userService } from '../../services/user.service';
 
 
 const ViewProduct: React.FC = () => {
@@ -12,6 +14,8 @@ const ViewProduct: React.FC = () => {
   const [error, setError] = useState<string | null>(null); // State for error handling
   const [placeholderImage, setPlaceholderImage] = useState<string>('https://i0.wp.com/port2flavors.com/wp-content/uploads/2022/07/placeholder-614.png?fit=1200%2C800&ssl=1'); // Placeholder image URL
   const [quantity, setQuantity] = useState<number>(1); // State for quantity
+  const [cartItems, setCartItems] = useState<CartItems[]>()
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,6 +58,26 @@ const ViewProduct: React.FC = () => {
   const handleDecreaseQuantity = () => {
     setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
   };
+
+  const handleAddCartItem = async (product: Product, quantity: number) => {
+    console.log(product)
+    const createdBy = Number(userService.getCurrentUserDetails()?.id)
+    console.log(createdBy)
+    const newCartItem: CartItems = {
+      ProductId: product.ProductID,
+      Quantity: quantity,
+      CreatedBy: createdBy
+    }
+    console.log(newCartItem)
+    try{
+      const response = await addCartItem(newCartItem);
+      console.log('Cart item added successfully:', response.data)
+
+      setQuantity(0)
+    }catch{
+      console.error('Error adding cart item:', error);
+    }
+  }
 
   return (
     <SharedLayout title="Product Details">
@@ -132,7 +156,7 @@ const ViewProduct: React.FC = () => {
 
                   </div>
                   <div className="col-9">
-                    <button className="btn btn-outline-primary btn-block w-100">
+                    <button className="btn btn-outline-primary btn-block w-100" onClick={() => handleAddCartItem(product, quantity)}>
                       <i className="bi bi-cart-plus"></i> Add to Cart
                     </button>
                   </div>
