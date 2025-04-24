@@ -85,7 +85,7 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Product.associate = (models) => {
-      Product.belongsTo(models.User, {
+      Product.belongsToMany(models.User, {
         foreignKey: "CreatedBy",
         as: "Creator"
       });
