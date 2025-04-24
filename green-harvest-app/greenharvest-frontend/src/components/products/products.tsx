@@ -27,24 +27,34 @@ const ProductPage = () => {
   const handleGetProducts = async () => {
     try {
       if(storeId){
-        const response = await getProductsByStoreId(storeId);
-        const productsWithStoreNames = await Promise.all(
-          response.data.map(async (product: Product) => {
-            try {
-              const storeResponse = await getStoreById(product.StoreID);
-              return { ...product, StoreName: storeResponse.data.Name }; // Add StoreName to the product
-            } catch (error) {
-              console.error(`Error fetching store for product ${product.ProductID}:`, error);
-              return { ...product, StoreName: 'Unknown Store' }; // Fallback if store fetch fails
-            }
-          })
-        );
+        try{
+          const response = await getProductsByStoreId(storeId);
+          const productsWithStoreNames = await Promise.all(
+            response.data.map(async (product: Product) => {
+              try {
+                const storeResponse = await getStoreById(product.StoreID);
+                return { ...product, StoreName: storeResponse.data.Name }; // Add StoreName to the product
+              } catch (error) {
+                console.error(`Error fetching store for product ${product.ProductID}:`, error);
+                return { ...product, StoreName: 'Unknown Store' }; // Fallback if store fetch fails
+              }
+            })
+          );
 
-        const storeData = await getStoreById(storeId)
+          const storeData = await getStoreById(storeId)
 
-        setStore(storeData.data)
-        setProducts(productsWithStoreNames);
-        setFilteredProducts(productsWithStoreNames);
+          setStore(storeData.data)
+          setProducts(productsWithStoreNames);
+          setFilteredProducts(productsWithStoreNames);
+        }catch(error){
+          console.log("No products")
+          const storeResponse = await getStoreById(storeId);
+          setStore(storeResponse.data)
+          setProducts([]);
+          setFilteredProducts([]);
+        }
+        
+
       }else{
         const response = await getProducts();
         const productsWithStoreNames = await Promise.all(
@@ -136,6 +146,12 @@ const ProductPage = () => {
     }
   };
 
+  const handleChangeStore = async (storeId: number) => {
+    setStoreId(storeId);
+    await handleGetProducts();
+    await handleGetStores();
+  }
+
   useEffect(() => {
     handleGetProducts();
     handleGetStores();
@@ -162,11 +178,17 @@ const ProductPage = () => {
 
         <div className="row mx-5">
           <div className="col-lg-2 border-end">
-            <ul className="list-group list-group-flush">
-              {stores.map((store) => (
-                <li className="list-group-item fw-medium text-end" key={store.StoreId} onClick={() => setStoreId(store.StoreId)}>
-                  {store.Name}
-                </li>
+            <ul className="">
+              {stores.map((storeData) => (
+                storeData.StoreId == store?.StoreId ? (
+                  <li className="list-group-item fw-bold text-end mb-2" role="button" key={storeData.StoreId} onClick={() => handleChangeStore(storeData.StoreId)}>
+                    {storeData.Name}
+                  </li>
+                ) : (
+                  <li className="list-group-item fw-light text-end mb-2" role="button" key={storeData.StoreId} onClick={() => handleChangeStore(storeData.StoreId)}>
+                    {storeData.Name}
+                  </li>
+                )
               ))}
             </ul>
           </div>
