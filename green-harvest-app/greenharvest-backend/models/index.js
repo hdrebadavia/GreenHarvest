@@ -29,6 +29,7 @@ db.Address = require("./addresses")(sequelize, DataTypes);
 db.Store = require("./stores")(sequelize, DataTypes);
 db.Order = require("./orders")(sequelize, DataTypes);
 db.OrderItem = require("./orderItems")(sequelize, DataTypes);
+db.CartItem = require("./cartItems")(sequelize, DataTypes);
 
 // Associations
 // db.User.hasMany(db.Address, { foreignKey: "UserId", as: "Addresses" });
