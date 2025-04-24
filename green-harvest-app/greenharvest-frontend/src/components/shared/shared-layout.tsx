@@ -2,12 +2,13 @@
 import { Container, Row, Col, Nav, Tab } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { getCartItems } from '../../services/api';
 import { CartItems } from '../../interfaces/cart.interface';
 import { userService } from '../../services/user.service';
 import './shared-layout.css'
 import Cart from '../cart/cart';
+import { useNavigate } from 'react-router-dom';
 
 interface SharedLayoutProps {
   title: string;
@@ -19,6 +20,8 @@ interface TabPanelProps {
   index: number;
   value: number;
 }
+
+const INACTIVITY_TIMEOUT_MS = 15 * 60 * 1000; // 15 minutes (adjust as needed)
 
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -47,6 +50,8 @@ const SharedLayout: React.FC<SharedLayoutProps> = ({ title, children }) => {
   const [activeKey, setActiveKey] = useState('products');
   const [cartItems, setCartItems] = useState<CartItems[]>()
   const [value, setValue] = React.useState(0);
+  const navigate = useNavigate();
+  const timeoutIdRef = useRef<number | null>(null);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -61,19 +66,88 @@ const SharedLayout: React.FC<SharedLayoutProps> = ({ title, children }) => {
       console.error('Error fetching cart items:', err);
     }
   }
-  useEffect(() => {
-    handleGetCartItems();
+
+  const handleLogout = () => {
+    console.log("Logging out (manual or timeout)...");
+    // Clear existing timeout if logout is triggered manually
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
+    }
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('user');
+    sessionStorage.removeItem('role');
+    // Optional: Clear user details from the service
+    // userService.clearUserDetails();
+    navigate('/'); // Redirect to login page
+    // Optional: Force reload
+    // window.location.reload();
+  };
+
+
+  // --- Inactivity Timer Logic ---
+  const resetInactivityTimer = useCallback(() => {
+    // Clear previous timer
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
+    }
+    // Set new timer
+    timeoutIdRef.current = setTimeout(() => {
+      console.log("Inactivity timeout reached.");
+      handleLogout(); // Trigger logout after timeout
+    }, INACTIVITY_TIMEOUT_MS);
   }, []);
 
+
+  useEffect(() => {
+    // List of events that indicate user activity
+    const activityEvents: (keyof WindowEventMap)[] = [
+      'mousemove', 'keydown', 'click', 'scroll', 'touchstart'
+  ];
+
+  // Function to reset timer on activity
+  const handleActivity = () => {
+    // console.log('User activity detected'); // Optional: for debugging
+    resetInactivityTimer();
+  };
+
+  // Add event listeners for activity
+  activityEvents.forEach(event => {
+    window.addEventListener(event, handleActivity, { passive: true }); // Use passive for scroll/touch performance
+  });
+
+  // Start the initial timer when the component mounts
+  resetInactivityTimer();
+
+  // --- Cleanup function ---
+  return () => {
+    // Clear the timeout when the component unmounts or before re-running the effect
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current);
+    }
+    // Remove event listeners
+    activityEvents.forEach(event => {
+      window.removeEventListener(event, handleActivity);
+    });
+  };
+}, [resetInactivityTimer, handleLogout]);
+
+  useEffect(() => {
+    // Fetch cart items only if logged in
+    if (sessionStorage.getItem('authToken')) {
+        handleGetCartItems();
+    }
+  }, []); // Runs once on mount
+
   return (
-    <div className="container">
-        <div className="row align-items-center p-5">
+    <div className="">
+        <div className="row align-items-center p-5 w-75 mx-auto">
           <div className="col-xs-12 col-md-3 text-center">
             <img
               src="/src/assets/GreenHarvest Logo - Transparent.png"
               alt="Logo"
               style={{
-                width: '35%',
+                maxWidth:"60%",
+                height:"auto",
                 transition: 'transform 0.2s',
                 cursor: 'pointer',
               }}
@@ -116,6 +190,7 @@ const SharedLayout: React.FC<SharedLayoutProps> = ({ title, children }) => {
           <div className="col-xs-12 col-md-3 text-center">
             <i className="bi bi-person-circle text-success fs-2 me-3"></i>
             <i className="bi bi-cart-plus text-success fs-2" role="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffCanvas" aria-controls="cartOffCanvas"></i>
+            <i className="bi bi-box-arrow-right"  role="button" onClick={handleLogout}></i>
           </div>
         </div>
         <div className="row">
