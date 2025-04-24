@@ -65,16 +65,19 @@ module.exports = (sequelize, DataTypes) => {
 
     // Define relationships
     User.associate = (models) => {
-        User.hasMany(models.Products, { foreignKey: "CreatedBy", as: "Products" });
-        User.hasMany(models.Products, { foreignKey: "UpdatedBy", as: "UpdatedProducts" });
-        User.belongsTo(models.Stores, { foreignKey: "StoreId", as: "Store" });
-        User.hasMany(models.Orders, { foreignKey: "CreatedBy", as: "Orders" });
-        User.hasMany(models.Orders, { foreignKey: "UpdatedBy", as: "UpdatedOrders" });
-        User.hasMany(models.Addresses, { foreignKey: "UserId", as: "Addresses" });
-        User.hasMany(models.OrderItems, { foreignKey: "UserId", as: "OrderItems" });
-        User.hasMany(models.Users, { foreignKey: "CreatedBy", as: "CreatedUsers" });
-        User.hasMany(models.Users, { foreignKey: "UpdatedBy", as: "UpdatedUsers" });
-        User.belongsTo(models.Users, { foreignKey: "CreatedBy", as: "Creator" });
+        User.hasMany(models.Product, {
+            foreignKey: "CreatedBy",
+            as: "CreatedProducts"
+        });
+        // User.hasMany(models.Products, { foreignKey: "UpdatedBy", as: "UpdatedProducts" });
+        // User.belongsTo(models.Stores, { foreignKey: "StoreId", as: "Store" });
+        // User.hasMany(models.Orders, { foreignKey: "CreatedBy", as: "Orders" });
+        // User.hasMany(models.Orders, { foreignKey: "UpdatedBy", as: "UpdatedOrders" });
+        // User.hasMany(models.Addresses, { foreignKey: "UserId", as: "Addresses" });
+        // User.hasMany(models.OrderItems, { foreignKey: "UserId", as: "OrderItems" });
+        // User.hasMany(models.Users, { foreignKey: "CreatedBy", as: "CreatedUsers" });
+        // User.hasMany(models.Users, { foreignKey: "UpdatedBy", as: "UpdatedUsers" });
+        // User.belongsTo(models.Users, { foreignKey: "CreatedBy", as: "Creator" });
     };
 
 
