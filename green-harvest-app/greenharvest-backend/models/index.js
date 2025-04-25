@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const config = require("../config/config.json")["development"]; //AZURE SQL
 // const config = require("../config/config.json")["local"]; //LOCAL SQL
-
+const initModels = require('./init-models');
 const sequelize = new Sequelize(
   config.database,
   config.username,
@@ -23,14 +23,11 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 // Import models
-db.Product = require("./products")(sequelize, DataTypes);
-db.User = require("./users")(sequelize, DataTypes);
-db.Address = require("./addresses")(sequelize, DataTypes);
-db.Store = require("./stores")(sequelize, DataTypes);
-db.Order = require("./orders")(sequelize, DataTypes);
-db.OrderItem = require("./orderItems")(sequelize, DataTypes);
-db.CartItem = require("./cartItems")(sequelize, DataTypes);
+const models = initModels(sequelize);
+db.models = models;
 
+// Spread models to top-level db for easier access
+Object.assign(db, models);
 // Associations
 // db.User.hasMany(db.Address, { foreignKey: "UserId", as: "Addresses" });
 // db.Store.hasMany(db.Product, { foreignKey: "StoreId", as: "Products" });

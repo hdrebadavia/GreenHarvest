@@ -1,86 +1,58 @@
-module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define("User", {
-        UserId: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-            field: "UserId"
-        },
-        FirstName: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            field: "FirstName"
-        },
-        MiddleName: {
-            type: DataTypes.STRING,
-            allowNull: true,
-            field: "MiddleName"
-        },
-        LastName: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            field: "LastName"
-        },
-        EmailAddress: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true,
-            field: "EmailAddress"
-        },
-        PasswordHash: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            field: "PasswordHash"
-        },
-        ContactNumber: {
-            type: DataTypes.STRING,
-            allowNull: true,
-            field: "ContactNumber"
-        },
-        Role: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            validate: {
-                isIn: [['Admin', 'Customer', 'StoreOwner']]
-            },
-            field: "Role"
-        },
-        CreatedAt: {
-            type: DataTypes.DATE,
-            field: "CreatedAt",
-            allowNull: false,
-            defaultValue: sequelize.literal("GETDATE()")
-        },
-        UpdatedAt: {
-            type: DataTypes.DATE,
-            allowNull: true,
-            field: "UpdatedAt",
-            onUpdate: sequelize.literal("GETDATE()")
-        },
-    }, {
-        tableName: "Users",
-        timestamps: false,
-        schema: "GreenHarvest"
-    });
+const Sequelize = require('sequelize');
 
-    // Define relationships
-    User.associate = (models) => {
-        User.hasMany(models.Product, {
-            foreignKey: "CreatedBy",
-            as: "CreatedProducts"
-        });
-        // User.hasMany(models.Products, { foreignKey: "UpdatedBy", as: "UpdatedProducts" });
-        // User.belongsTo(models.Stores, { foreignKey: "StoreId", as: "Store" });
-        // User.hasMany(models.Orders, { foreignKey: "CreatedBy", as: "Orders" });
-        // User.hasMany(models.Orders, { foreignKey: "UpdatedBy", as: "UpdatedOrders" });
-        // User.hasMany(models.Addresses, { foreignKey: "UserId", as: "Addresses" });
-        // User.hasMany(models.OrderItems, { foreignKey: "UserId", as: "OrderItems" });
-        // User.hasMany(models.Users, { foreignKey: "CreatedBy", as: "CreatedUsers" });
-        // User.hasMany(models.Users, { foreignKey: "UpdatedBy", as: "UpdatedUsers" });
-        // User.belongsTo(models.Users, { foreignKey: "CreatedBy", as: "Creator" });
-    };
-
-
-
-    return User;
+module.exports = function (sequelize, DataTypes) {
+  return sequelize.define(
+    'Users',
+    {
+      UserID: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true, // Set as primary key
+        autoIncrement: true, // Auto-increment for primary key
+      },
+      FirstName: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+      },
+      LastName: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+      },
+      EmailAddress: {
+        type: DataTypes.STRING(100),
+        allowNull: false, // Email should not be null
+        unique: true, // Ensure uniqueness
+      },
+      Role: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+      },
+      PasswordHash: {
+        type: DataTypes.STRING(100),
+        allowNull: false, // Password should not be null
+      },
+      // Address: {
+      //   type: DataTypes.TEXT,
+      //   allowNull: true,
+      // },
+    },
+    {
+      sequelize,
+      tableName: 'Users',
+      schema: 'GreenHarvest', // Ensure consistent schema name
+      timestamps: true, // Automatically adds createdAt and updatedAt fields
+      indexes: [
+        {
+          name: 'PK__Users__1788CC4C6FB8DF3D',
+          unique: true,
+          fields: [{ name: 'UserID' }],
+        },
+        {
+          name: 'UQ__Users__49A147401EF05833',
+          unique: true,
+          fields: [{ name: 'EmailAddress' }],
+        },
+      ],
+    }
+  );
 };

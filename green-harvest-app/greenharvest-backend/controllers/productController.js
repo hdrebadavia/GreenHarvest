@@ -1,16 +1,15 @@
-const db = require("../models"); // Import the models index
-const Product = db.Product; // Get the Product model
-
+const db = require("../models");
+const Product = db.Products;
+const User = db.Users;
 
 // Get all products
 const getProducts = async (req, res) => {
     try {
         const products = await Product.findAll({
-            // include:{
-            //     model: db.User,
-            //     as: "Creator",
-            //     attributes: ['FirstName', 'LastName']
-            // }
+            include: {
+                model: User,
+                as: "CreatedBy_User" // Must match the `as` name in the belongsTo
+              }
         });
         // const productsWithFullName = products.map(product => ({
         //     ...product.toJSON(),

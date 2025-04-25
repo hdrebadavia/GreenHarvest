@@ -1,103 +1,68 @@
-const { Product } = require(".");
+const Sequelize = require('sequelize');
 
-module.exports = (sequelize, DataTypes) => {
-    const Product = sequelize.define("Product", {
+module.exports = function (sequelize, DataTypes) {
+  return sequelize.define(
+    'Products',
+    {
       ProductID: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         primaryKey: true,
         autoIncrement: true,
-        field: "ProductId"
       },
       Name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         allowNull: false,
-        field: "Name"
       },
       Description: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        field: "Description"
+        type: DataTypes.TEXT,
+        allowNull: true,
       },
-      ProductType: {
-        type: DataTypes.STRING,
+      Price: {
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
-        field: "ProductType"
       },
       Quantity: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        field: "Quantity"
-      },
-      Unit: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        field: "Unit"
-      },
-      Price: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-        field: "Price"
-      },
-      StoreID: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        field: "StoreId",
-        references: {
-            model: "Stores",
-            key: "StoreId"
-        },
-        onDelete: "CASCADE"
-      },
-      CreatedAt: {
-          type: DataTypes.DATE,
-          field: "CreatedAt",
-          allowNull: false,
-          defaultValue: sequelize.literal("GETDATE()")
       },
       CreatedBy: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        field: "CreatedBy",
+        allowNull: true,
         references: {
-          model: 'Users',
-          key: 'UserId'
-        }
+          model: 'Users', // References the Users table
+          key: 'UserId',
+        },
       },
-      UpdatedAt: {
-          type: DataTypes.DATE,
-          field: "UpdatedAt",
-          allowNull: true,
-          onUpdate: sequelize.literal("GETDATE()")
+      CreatedBy: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Users', // References the Users table
+          key: 'UserId',
+        },
       },
       UpdatedBy: {
         type: DataTypes.INTEGER,
         allowNull: true,
-        field: "UpdatedBy",
         references: {
-          model: 'Users',
-          key: 'UserId'
-        }
-      }
-    }, {
-        tableName: "Products",
-        timestamps: false,
-        schema: "GreenHarvest"
-    });
-
-    Product.associate = (models) => {
-      Product.belongsToMany(models.User, {
-        foreignKey: "CreatedBy",
-        as: "Creator"
-      });
-      // Product.belongsToMany(models.Users, { foreignKey: "UpdatedBy", as: "Updater" });
-      // Product.belongsTo(models.Stores, { foreignKey: "StoreId", as: "Store" });
-      // Product.hasMany(models.OrderItems, { foreignKey: "ProductId", as: "OrderItems" });
-      // Product.hasMany(models.Orders, { foreignKey: "ProductId", as: "Orders" });
-      // Product.hasMany(models.Addresses, { foreignKey: "ProductId", as: "Addresses" });
-      // Product.hasMany(models.Stores, { foreignKey: "ProductId", as: "Stores" });
-      // Product.hasMany(models.Users, { foreignKey: "ProductId", as: "Users" });
-      // Product.hasMany(models.Products, { foreignKey: "ProductId", as: "Products" });
-    };
-
-    return Product;
+          model: 'Users', // References the Users table
+          key: 'UserId',
+        },
+      },
+    },
+    {
+      sequelize,
+      tableName: 'Products',
+      schema: 'GreenHarvest', // Ensure consistent schema name
+      timestamps: true, // Automatically adds createdAt and updatedAt fields
+      indexes: [
+        {
+          name: 'PK__Products__B40CC6CDDB360752',
+          unique: true,
+          fields: [{ name: 'ProductID' }],
+        },
+      ],
+    }
+  );
 };
