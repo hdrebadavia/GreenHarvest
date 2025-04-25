@@ -6,6 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import ViewProduct from './components/products/view-product';
+import Stores from './components/admin/stores';
+
 
 function App() {
   const hasSessionToken = !!sessionStorage.getItem('authToken')
@@ -31,6 +33,12 @@ function App() {
       } />
       <Route path="/products/:productId" element={
            <ViewProduct/>
+      } />
+
+      <Route path="/stores" element={
+        <ProtectedRoute>
+          <Stores />
+        </ProtectedRoute>
       } />
     </Routes>
   );
