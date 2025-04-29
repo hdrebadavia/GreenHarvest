@@ -46,11 +46,6 @@ const AddProducts: React.FC<AddProductsProps> = ({ onSuccess, productIdParam }) 
     e.preventDefault();
     setCreatedBy(Number(sessionStorage.getItem('user')));
     console.log(createdBy)
-    if (!storeId) {
-      alert('Store ID is required.');
-      return;
-    }
-
     // Create a new product object conforming to the Product interface
     const newProduct: Product = {
       ProductID: 0, // Assuming the backend auto-generates this
@@ -61,7 +56,7 @@ const AddProducts: React.FC<AddProductsProps> = ({ onSuccess, productIdParam }) 
       ProductType: category,
       Quantity: parseInt(stock, 10),
       Unit: 'pcs', // Default unit, adjust as needed
-      StoreID: parseInt(storeId), // Ensure StoreID is a valid number
+      StoreID: 1, // Ensure StoreID is a valid number
       CreatedBy: createdBy, // Set CreatedBy to the logged-in user's ID
     };
     try {

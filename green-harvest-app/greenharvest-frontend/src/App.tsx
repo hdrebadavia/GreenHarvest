@@ -7,6 +7,8 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import ViewProduct from './components/products/view-product';
 import Stores from './components/admin/stores';
+import AdminLayout from './components/shared/admin-layout';
+import Orders from './components/orders/orders';
 
 
 function App() {
@@ -38,6 +40,18 @@ function App() {
       <Route path="/stores" element={
         <ProtectedRoute>
           <Stores />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/admin" element={
+        <ProtectedRoute>
+          <AdminLayout />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/orders" element={
+        <ProtectedRoute>
+          <Orders />
         </ProtectedRoute>
       } />
     </Routes>

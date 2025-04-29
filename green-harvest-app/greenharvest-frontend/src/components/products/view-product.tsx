@@ -5,6 +5,7 @@ import SharedLayout from '../shared/shared-layout';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CartItems } from '../../interfaces/cart.interface';
 import { userService } from '../../services/user.service';
+import Toast from '../shared/toast';
 
 
 const ViewProduct: React.FC = () => {
@@ -12,12 +13,28 @@ const ViewProduct: React.FC = () => {
   const [product, setProduct] = useState<Product | null>(null); // Corrected state type
   const [loading, setLoading] = useState(true); // State for loading
   const [error, setError] = useState<string | null>(null); // State for error handling
-  const [placeholderImage, setPlaceholderImage] = useState<string>('https://i0.wp.com/port2flavors.com/wp-content/uploads/2022/07/placeholder-614.png?fit=1200%2C800&ssl=1'); // Placeholder image URL
+  const [placeholderImage, setPlaceholderImage] = useState<string>('https://assets.clevelandclinic.org/transform/LargeFeatureImage/cd71f4bd-81d4-45d8-a450-74df78e4477a/Apples-184940975-770x533-1_jpg'); // Placeholder image URL
   const [quantity, setQuantity] = useState<number>(1); // State for quantity
   const [cartItems, setCartItems] = useState<CartItems[]>()
 
   const navigate = useNavigate();
 
+  const [successMessage, setSuccessMessage] = useState(''); // State for success message
+  const [showToast, setShowToast] = useState(false); // State to control toast visibility
+  const handleSuccessMessage = (message: string) => {
+    const dismissButton = document.getElementById('dismissOffcanvasButton');
+    if (dismissButton) {
+      dismissButton.click();
+    }
+
+    setSuccessMessage(message);
+    setShowToast(true); // Show the toast
+
+    setTimeout(() => {
+      setSuccessMessage('');
+      setShowToast(false)
+    }, 3000);
+  };
 
   useEffect(() => {
     const handleGetProduct = async () => {
@@ -61,6 +78,7 @@ const ViewProduct: React.FC = () => {
   };
 
   const handleAddCartItem = async (product: Product, quantity: number) => {
+    handleSuccessMessage("Item Added to Cart")
     console.log(product)
     const createdBy = Number(sessionStorage.getItem('user'))
     console.log(createdBy)
@@ -82,6 +100,12 @@ const ViewProduct: React.FC = () => {
 
   return (
     <SharedLayout title="Product Details">
+      <Toast
+        show={showToast}
+        message={successMessage}
+        type="success"
+        onClose={() => setShowToast(false)}
+      />
       <div className="container">
         {loading ? (
           <p>Loading product details...</p>
@@ -113,7 +137,7 @@ const ViewProduct: React.FC = () => {
                       <span className="badge bg-success-subtle text-success">{product.ProductType}</span>
                     </div>
                     <div className="col-3 text-end">
-                      <span className="fw-bold h3 text-success">${product.Price}</span>
+                      <span className="fw-bold h3 text-success">₱{product.Price}</span>
                       <span className="text-muted"> / {product.Unit}</span>
                     </div>
                   </div>

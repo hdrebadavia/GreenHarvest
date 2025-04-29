@@ -7,6 +7,7 @@ import { Product } from '../../interfaces/product.interface'; // Import the Prod
 import { useNavigate } from 'react-router-dom';
 import Toast from '../shared/toast';
 import { Store } from '../../interfaces/store.interface';
+import Checkout from '../cart/checkout';
 
 const ProductPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -23,6 +24,21 @@ const ProductPage = () => {
   const [placeholderImage, setPlaceholderImage] = useState<string>('https://i0.wp.com/port2flavors.com/wp-content/uploads/2022/07/placeholder-614.png?fit=1200%2C800&ssl=1'); // Placeholder image URL
   const [storeId, setStoreId] = useState<number>(1)
   const [productId, setProductId] = useState<number | null>(null)
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  //images
+  const Apple = "https://assets.clevelandclinic.org/transform/LargeFeatureImage/cd71f4bd-81d4-45d8-a450-74df78e4477a/Apples-184940975-770x533-1_jpg"
+
+  const productImages: { [key: string]: string } = {
+    Apple: "https://assets.clevelandclinic.org/transform/LargeFeatureImage/cd71f4bd-81d4-45d8-a450-74df78e4477a/Apples-184940975-770x533-1_jpg",
+    Banana: "https://nutritionsource.hsph.harvard.edu/wp-content/uploads/2018/08/bananas-1354785_1920.jpg",
+    Orange: "https://cdn.mos.cms.futurecdn.net/xCZ2VwHz6pDUHCSVvaQsDT-1200-80.jpg",
+    Peach: "https://media.post.rvohealth.io/wp-content/uploads/2020/08/peach-fruit-benefits-732x549-thumbnail.jpg",
+    Strawberry: "https://berries.net.au/wp-content/uploads/2020/01/STR-Acc7.jpg",
+    Pineapple: "https://media.self.com/photos/5b4371cc4d0c3c282a8878d3/4:3/w_2560%2Cc_limit/pineapple.jpg",
+    Papaya: "https://cdn.megawecare.com/Featured-Images/G4vDIrwfeCNSMGQC6XUG26dRbmIirn5dvZuoELpz.webp"
+    // Add more as needed
+  };
 
   const handleGetProducts = async () => {
     try {
@@ -53,7 +69,7 @@ const ProductPage = () => {
           setProducts([]);
           setFilteredProducts([]);
         }
-        
+
 
       }else{
         const response = await getProducts();
@@ -155,6 +171,8 @@ const ProductPage = () => {
   useEffect(() => {
     handleGetProducts();
     handleGetStores();
+
+    setUserRole(sessionStorage.getItem('role'));
   }, []);
 
   if (loading) {
@@ -179,7 +197,10 @@ const ProductPage = () => {
         <div className="row mx-5">
           <div className="col-lg-2 border-end">
             <ul className="">
-              {stores.map((storeData) => (
+                <li className="list-group-item fw-bold text-end mb-2" role="button" >
+                  Your Store
+                </li>
+              {/* {stores.map((storeData) => (
                 storeData.StoreId == store?.StoreId ? (
                   <li className="list-group-item fw-bold text-end mb-2" role="button" key={storeData.StoreId} onClick={() => handleChangeStore(storeData.StoreId)}>
                     {storeData.Name}
@@ -189,14 +210,15 @@ const ProductPage = () => {
                     {storeData.Name}
                   </li>
                 )
-              ))}
+              ))} */}
             </ul>
           </div>
           <div className="col-lg-10 col-sm-12 px-5">
             <div className="row mb-2">
               <div className="col-lg-5 col-sm-12">
                 <h3 className="text-muted fw-bolder">
-                  {store?.StoreId ? (<span> {store?.Name}</span>) : (<span>Store</span>)}
+                  Your Store
+                  {/* {store?.StoreId ? (<span> {store?.Name}</span>) : (<span>Store</span>)} */}
                 </h3>
               </div>
               <div className="col-lg-7 mb-sm-2">
@@ -215,9 +237,10 @@ const ProductPage = () => {
               </div>
             </div>
 
+            {userRole === 'admin' || userRole === 'Customer' ? (
             <div className="mb-4 text-start justify-content-end d-flex flex-wrap">
               {/* Toggler Buttons */}
-              <div className="border-end">
+              <div className="">
                 <button
                   className={`btn ${viewMode === 'card' ? 'btn-success' : 'btn-outline-success'} me-2 btn-sm`}
                   onClick={() => setViewMode('card')}
@@ -233,14 +256,18 @@ const ProductPage = () => {
                   Table View
                 </button>
               </div>
-              <div className="ps-1 ms-1">
-                <button className="btn btn-sm btn-primary w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#addProductOffCanvas" aria-controls="addProductOffCanvas">
-                  <i className="bi bi-plus"></i>
-                  Add Product
-                </button>
-              </div>
+                <div className="ps-1 ms-1">
+                  <button className="btn btn-sm btn-primary w-100" type="button" data-bs-toggle="offcanvas" data-bs-target="#addProductOffCanvas" aria-controls="addProductOffCanvas">
+                    <i className="bi bi-plus"></i>
+                    Add Product
+                  </button>
+                </div>
+              </div>) : (
+                  <div></div>
 
-            </div>
+                )
+              }
+
 
             {/* Products List */}
             {viewMode === 'card' ? (
@@ -254,11 +281,14 @@ const ProductPage = () => {
                     </div>
                   ) :
                   (
-                    filteredProducts.map((product, index) => (
+                    filteredProducts.map((product, index) => {
+
+                      const imageUrl = productImages[product.Name] || placeholderImage;
+                      return(
                       <div className="col-12 col-sm-6 col-md-4 mb-4" key={product.ProductID || index}>
                         <div className="card h-100" onClick={() => handleViewProduct(product.ProductID)}>
                           <img
-                            src={product.imageUrl? product.imageUrl : placeholderImage}
+                            src={imageUrl}
                             className="card-img-top"
                             alt={product.Name}
                             style={{ height: '140px', objectFit: 'cover' }}
@@ -266,11 +296,11 @@ const ProductPage = () => {
                           <div className="card-body">
                             <h5 className="card-title">{product.Name}</h5>
                             <p className="card-text text-muted">{product.StoreName}</p>
-                            <h6 className="card-subtitle text-primary">${product.Price}</h6>
+                            <h6 className="card-subtitle text-primary">₱{product.Price}.00</h6>
                           </div>
                         </div>
                       </div>
-                    )
+                    )}
                   )
                   )}
               </div>
@@ -283,7 +313,7 @@ const ProductPage = () => {
                       <th>Product Name</th>
                       <th>Product Type</th>
                       <th>Price</th>
-                      <th>Quantity</th>
+                      <th>In Stock</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -297,12 +327,16 @@ const ProductPage = () => {
                             </td>
                           </tr>
                         ) : (
-                          filteredProducts.map((product, index) => (
+                          filteredProducts.map((product, index) => {
+
+                            const imageUrl = productImages[product.Name] || placeholderImage;
+
+                            return(
                             <tr key={product.ProductID || index}>
                               <td className="align-middle">{index + 1}</td>
                               <td className="align-middle">{product.Name}</td>
                               <td className="align-middle">{product.ProductType}</td>
-                              <td className="align-middle">${product.Price}</td>
+                              <td className="align-middle">₱{product.Price}</td>
                               <td className="align-middle">{product.Quantity} {product.Unit}</td>
                               <td className="align-middle">
                                 <button className="btn btn-danger btn-sm" onClick={() => handleDeleteProduct(product.ProductID)}>
@@ -314,7 +348,7 @@ const ProductPage = () => {
                                 </button>
                               </td>
                             </tr>
-                          ))
+                          )})
                         )
                     }
                   </tbody>

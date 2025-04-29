@@ -9,11 +9,9 @@ import { userService } from '../../services/user.service';
 import './shared-layout.css'
 import Cart from '../cart/cart';
 import { useNavigate } from 'react-router-dom';
-
-interface SharedLayoutProps {
-  title: string;
-  children: React.ReactNode;
-}
+import Stores from '../admin/stores';
+import ProductPage from '../products/products';
+import Users from '../admin/users';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -46,7 +44,7 @@ function a11yProps(index: number) {
   };
 }
 
-const SharedLayout: React.FC<SharedLayoutProps> = ({ title, children }) => {
+const AdminLayout = () => {
   const [activeKey, setActiveKey] = useState('products');
   const [cartItems, setCartItems] = useState<CartItems[]>()
   const [value, setValue] = React.useState(0);
@@ -83,9 +81,6 @@ const SharedLayout: React.FC<SharedLayoutProps> = ({ title, children }) => {
     // window.location.reload();
   };
 
-  const handleOrders = () => {
-    navigate('/orders');
-  }
 
   // --- Inactivity Timer Logic ---
   const resetInactivityTimer = useCallback(() => {
@@ -142,12 +137,7 @@ const SharedLayout: React.FC<SharedLayoutProps> = ({ title, children }) => {
   }, []); // Runs once on mount
 
   return (
-    <div style={{
-      backgroundImage: `linear-gradient(rgb(255, 255, 255), rgba(40, 131, 77, 0.66))`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      height: '150vh',
-    }}>
+    <div className="">
         <div className="row align-items-center p-5 w-75 mx-auto">
           <div className="col-xs-12 col-md-3 text-center">
             <img
@@ -168,63 +158,63 @@ const SharedLayout: React.FC<SharedLayoutProps> = ({ title, children }) => {
               <li className="nav-item" role="presentation">
                 <button
                   className="nav-link active rounded-pill"
-                  id="products-tab"
+                  id="stores-tab"
                   data-bs-toggle="tab"
-                  data-bs-target="#products"
+                  data-bs-target="#stores"
                   type="button"
                   role="tab"
-                  aria-controls="products"
+                  aria-controls="stores"
                   aria-selected="true"
                 >
-                  Products
+                  Stores
                 </button>
               </li>
               <li className="nav-item" role="presentation">
                 <button
                   className="nav-link rounded-pill"
-                  id="about-tab"
+                  id="inventory-tab"
                   data-bs-toggle="tab"
-                  data-bs-target="#about"
+                  data-bs-target="#inventory"
                   type="button"
                   role="tab"
-                  aria-controls="about"
+                  aria-controls="inventory"
                   aria-selected="false"
                 >
-                  About GreenHarvest
+                  Inventory
+                </button>
+              </li>
+              <li className="nav-item" role="presentation">
+                <button
+                  className="nav-link rounded-pill"
+                  id="users-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#users"
+                  type="button"
+                  role="tab"
+                  aria-controls="users"
+                  aria-selected="false"
+                >
+                  Users
                 </button>
               </li>
             </ul>
           </div>
           <div className="col-xs-12 col-md-3 text-center">
             <i className="bi bi-person-circle text-success fs-2 me-3"></i>
-            <i className="bi bi-cart-plus text-success fs-2 me-3" role="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffCanvas" aria-controls="cartOffCanvas"></i>
-            <i className="bi bi-card-checklist text-success fs-3 me-3"role="button" onClick={handleOrders}></i>
-            <i className="bi bi-box-arrow-right text-success fs-3"role="button" onClick={handleLogout}></i>
+            <i className="bi bi-cart-plus text-success fs-2" role="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffCanvas" aria-controls="cartOffCanvas"></i>
+            <i className="bi bi-box-arrow-right"  role="button" onClick={handleLogout}></i>
           </div>
         </div>
         <div className="row">
           <div className="tab-content" id="myTabContent">
-            <div className="tab-pane fade show active" id="products" role="tabpanel" aria-labelledby="products-tab">
-              {children}
+            <div className="tab-pane fade show active" id="stores" role="tabpanel" aria-labelledby="stores-tab">
+              <Stores></Stores>
             </div>
-            <div className="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab">
-              <div className="container w-50">
-                <div className="row">
-                  <div className="col-12">
-                    <h3 className="text-center mb-4 fw-bold">About GreenHarvest</h3>
-                    <div className="card">
-                      <div className="card-body">
-                        <p>
-                        <b>GreenHarvest</b> is a web-based application that will provide a platform to connect local farmers, consumers, and businesses to promote sustainable agriculture and help reduce food waste. The system aims to provide support to the social enterprise Rural Rising Philippines (RuRi), which helps farmers to distribute their crops to consumers and businesses.
-                          <br></br><br></br>
-                        GreenHarvest aims to support the Sustainable Development Goal (SDG) number 12 of ensuring sustainable and responsible consumption and production. The system will allow farmers and suppliers to sell excess produce and provide consumers with fresh and locally produced ingredients.
-                        </p>
-                        <img  className="w-100" src="https://www.gsma.com/solutions-and-impact/connectivity-for-good/mobile-for-development/wp-content/uploads/2019/11/AG0_4787.jpg" alt="" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="tab-pane fade show" id="inventory" role="tabpanel" aria-labelledby="inventory-tab">
+              <Users></Users>
+            </div>
+            <div className="tab-pane fade show" id="users" role="tabpanel" aria-labelledby="users-tab">
+              <Stores></Stores>
             </div>
           </div>
         </div>
@@ -242,4 +232,4 @@ const SharedLayout: React.FC<SharedLayoutProps> = ({ title, children }) => {
   );
 };
 
-export default SharedLayout;
+export default AdminLayout;
