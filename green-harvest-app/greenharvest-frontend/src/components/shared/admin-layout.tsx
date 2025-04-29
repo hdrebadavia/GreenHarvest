@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import Stores from '../admin/stores';
 import ProductPage from '../products/products';
 import Users from '../admin/users';
+import Inventory from '../admin/inventory';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -137,7 +138,12 @@ const AdminLayout = () => {
   }, []); // Runs once on mount
 
   return (
-    <div className="">
+    <div  style={{
+      backgroundImage: `linear-gradient(rgb(255, 255, 255), rgba(40, 131, 77, 0.66))`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      height: '150vh',
+    }}>
         <div className="row align-items-center p-5 w-75 mx-auto">
           <div className="col-xs-12 col-md-3 text-center">
             <img
@@ -180,10 +186,10 @@ const AdminLayout = () => {
                   aria-controls="inventory"
                   aria-selected="false"
                 >
-                  Inventory
+                  Orders
                 </button>
               </li>
-              <li className="nav-item" role="presentation">
+              {/* <li className="nav-item" role="presentation">
                 <button
                   className="nav-link rounded-pill"
                   id="users-tab"
@@ -196,13 +202,14 @@ const AdminLayout = () => {
                 >
                   Users
                 </button>
-              </li>
+              </li> */}
             </ul>
           </div>
           <div className="col-xs-12 col-md-3 text-center">
             <i className="bi bi-person-circle text-success fs-2 me-3"></i>
-            <i className="bi bi-cart-plus text-success fs-2" role="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffCanvas" aria-controls="cartOffCanvas"></i>
-            <i className="bi bi-box-arrow-right"  role="button" onClick={handleLogout}></i>
+            {/* <i className="bi bi-cart-plus text-success fs-2" role="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffCanvas" aria-controls="cartOffCanvas"></i> */}
+            
+            {/* <i className="bi bi-box-arrow-right text-success fs-3 ms-3"role="button" onClick={handleLogout}></i> */}
           </div>
         </div>
         <div className="row">
@@ -211,10 +218,10 @@ const AdminLayout = () => {
               <Stores></Stores>
             </div>
             <div className="tab-pane fade show" id="inventory" role="tabpanel" aria-labelledby="inventory-tab">
-              <Users></Users>
+              <Inventory></Inventory>
             </div>
             <div className="tab-pane fade show" id="users" role="tabpanel" aria-labelledby="users-tab">
-              <Stores></Stores>
+              <Users></Users>
             </div>
           </div>
         </div>
